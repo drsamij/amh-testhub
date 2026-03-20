@@ -1660,24 +1660,48 @@ function exportDevCSV(){
 
 function sendToTelegram(){
  const txt=buildDevSummaryText();
- // Use Telegram Bot API if configured, otherwise open share link
  const TELEGRAM_BOT_TOKEN='7745390860:AAGrdajKaIzqrpR2jyWXphqUd6TSvqJjEFM';
  const TELEGRAM_CHAT_ID='8388890620';
 
- fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text:txt,parse_mode:'',disable_web_page_preview:true})
- })
- .then(res=>res.json())
- .then(data=>{
-  if(data.ok) toast('Report sent to Telegram!','success');
-  else toast('Telegram error: '+data.description,'error');
- })
- .catch(()=>{
-  // Fallback: open Telegram share URL
-  window.open(`https://t.me/share/url?url=${encodeURIComponent('AMH Bug Report')}&text=${encodeURIComponent(txt)}`,'_blank');
-  toast('Opened Telegram share...','info');
+ // Telegram API limit is 4096 chars per message; split if needed
+ const MAX_LEN=4096;
+ const chunks=[];
+ if(txt.length<=MAX_LEN){
+  chunks.push(txt);
+ } else {
+  let remaining=txt;
+  while(remaining.length>0){
+   if(remaining.length<=MAX_LEN){chunks.push(remaining);break;}
+   let splitAt=remaining.lastIndexOf('\n',MAX_LEN);
+   if(splitAt<1) splitAt=MAX_LEN;
+   chunks.push(remaining.substring(0,splitAt));
+   remaining=remaining.substring(splitAt).replace(/^\n/,'');
+  }
+ }
+
+ toast('Sending to Telegram...','info');
+
+ // Send chunks sequentially
+ let sendChain=Promise.resolve();
+ chunks.forEach((chunk,i)=>{
+  sendChain=sendChain.then(()=>
+   fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text:chunk,disable_web_page_preview:true})
+   })
+   .then(res=>res.json())
+   .then(data=>{
+    if(!data.ok) throw new Error(data.description||'Unknown Telegram API error');
+    if(i===chunks.length-1) toast('Report sent to Telegram!','success');
+   })
+  );
+ });
+
+ sendChain.catch(err=>{
+  console.error('Telegram send failed:',err);
+  toast('Telegram error: '+(err.message||'Network error')+'. Opening share link...','error');
+  window.open(`https://t.me/share/url?url=${encodeURIComponent('AMH Bug Report')}&text=${encodeURIComponent(txt.substring(0,2000))}`,'_blank');
  });
 }
 
