@@ -159,12 +159,8 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
  .sc-actions .status-btn { min-height: 48px; flex: 1; justify-content: center; font-size: .9rem; padding: 12px 8px; border-radius: 12px; display:flex;align-items:center; }
  .sc-extra{align-items:center;min-width:auto}
 
- /* Sticky submit bar at bottom */
- .submit-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; background: white; border-top: 2px solid #e2e6ea; padding: 12px 16px; display: flex; gap: 8px; box-shadow: 0 -4px 12px rgba(0,0,0,.1); }
- .submit-bar .btn { flex: 1; min-height: 48px; justify-content: center; font-size: 1rem; border-radius: 12px; }
-
- /* Add bottom padding for submit bar */
- body { padding-bottom: 80px; }
+ /* Add bottom padding for save button */
+ body { padding-bottom: 20px; }
 
  /* Module headers bigger */
  .module-header { min-height: 48px; }
@@ -259,19 +255,8 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
  <div id="scenarios-container"></div>
 
  <!-- Actions -->
- <div class="flex-between mt-24">
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-   <button class="btn btn-pri" onclick="exportTesterJSON()">&#128229; Export Results (JSON)</button>
-   <button class="btn btn-outline" onclick="copyForTeams('tester')">&#128203; Copy for Teams</button>
-  </div>
-  <button class="btn btn-red btn-sm" onclick="resetTesterData()">&#128465; Reset All</button>
- </div>
-
- <!-- Mobile Sticky Submit Bar -->
- <div class="submit-bar" id="submitBar" style="display:none;">
-  <button class="btn btn-pri" onclick="submitViaWhatsApp()" style="background:#25D366;">&#128241; WhatsApp</button>
-  <button class="btn btn-pri" onclick="submitViaEmail()">&#128231; Email</button>
-  <button class="btn btn-outline" onclick="exportTesterJSON()">&#128190; Save</button>
+ <div class="flex-between mt-24" style="justify-content:center">
+  <button class="btn btn-pri" onclick="saveResults()" style="min-width:200px;min-height:48px;font-size:1rem;">&#128190; Save Results</button>
  </div>
 </div>
 
@@ -371,12 +356,36 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
  <div class="modal">
   <h2>Welcome, Tester!</h2>
   <p class="sub">Please fill in your device details to get started.</p>
+
+  <!-- Resume section - shown if saved sessions exist -->
+  <div id="resume-section" style="display:none;margin-bottom:20px;padding:16px;background:var(--pri-light);border-radius:var(--radius);border:1px solid var(--pri);">
+   <p style="font-weight:600;color:var(--pri);margin-bottom:8px;">&#128260; Continue previous test?</p>
+   <div class="form-group" style="margin-bottom:8px"><label>Enter your name to resume</label><input type="text" id="resume-name" placeholder="e.g. Ahmed" style="margin-top:4px"></div>
+   <button class="btn btn-pri" style="width:100%" onclick="resumeSession()">Continue Testing</button>
+   <p id="resume-error" style="color:var(--red);font-size:.82rem;margin-top:6px;display:none"></p>
+   <div style="text-align:center;margin-top:12px;color:var(--text-sec);font-size:.82rem">— or start fresh below —</div>
+  </div>
+
   <div class="form-group"><label>Your Name</label><input type="text" id="ob-name" placeholder="e.g. Ahmed"></div>
   <div class="form-group"><label>Operating System</label><select id="ob-os"><option value="">Select...</option><option>iOS</option><option>Android</option></select></div>
   <div class="form-group"><label>Device Model</label><select id="ob-device"><option value="">Select...</option><optgroup label="Apple"><option>iPhone 16 Pro Max</option><option>iPhone 16 Pro</option><option>iPhone 16</option><option>iPhone 15 Pro Max</option><option>iPhone 15 Pro</option><option>iPhone 15</option><option>iPhone 14 Pro Max</option><option>iPhone 14</option><option>iPhone 13</option><option>iPad Pro 12.9"</option><option>iPad Air</option><option>iPad 10th Gen</option></optgroup><optgroup label="Samsung"><option>Samsung S25 Ultra</option><option>Samsung S25</option><option>Samsung S24 Ultra</option><option>Samsung S24</option><option>Samsung S23 Ultra</option><option>Samsung S23</option><option>Samsung Z Fold 6</option><option>Samsung Z Flip 6</option><option>Samsung A55</option><option>Samsung A35</option><option>Samsung A15</option><option>Samsung Tab S9</option></optgroup><optgroup label="Huawei"><option>Huawei Pura 70 Pro</option><option>Huawei Mate 60 Pro</option><option>Huawei Nova 12</option></optgroup><optgroup label="Other"><option>Google Pixel 9</option><option>Honor Magic 6</option><option>Xiaomi 14</option><option>Other</option></optgroup></select></div>
   <div class="form-group"><label>App Version</label><input type="text" id="ob-version" placeholder="e.g. 1.0.3"></div>
   <div class="form-group"><label>Network Type</label><select id="ob-network"><option value="">Select...</option><option>WiFi (Hospital)</option><option>WiFi (Home)</option><option>4G/LTE</option><option>5G</option></select></div>
   <button class="btn btn-pri" style="width:100%;margin-top:8px" onclick="saveOnboarding()">Start Testing</button>
+ </div>
+</div>
+
+<!-- ==================== ADMIN PASSWORD MODAL ==================== -->
+<div class="modal-overlay hidden" id="admin-password-modal">
+ <div class="modal" style="text-align:center">
+  <h2>&#128274; Admin Access</h2>
+  <p class="sub">Enter the admin password to continue.</p>
+  <div class="form-group"><input type="password" id="admin-pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')verifyAdminPassword()"></div>
+  <p id="admin-pw-error" style="color:var(--red);font-size:.82rem;display:none">Incorrect password. Try again.</p>
+  <div style="display:flex;gap:8px">
+   <button class="btn btn-outline" style="flex:1" onclick="closeAdminPassword()">Cancel</button>
+   <button class="btn btn-pri" style="flex:1" onclick="verifyAdminPassword()">&#128275; Unlock</button>
+  </div>
  </div>
 </div>
 
@@ -480,11 +489,39 @@ function saveExpertData(){localStorage.setItem('amh_expert_data',JSON.stringify(
 /* ===================================================================
    TABS
    =================================================================== */
+const ADMIN_PASSWORD = 'amh2026';
+let adminUnlocked = false;
+
 function switchTab(tab){
+ if(tab==='admin' && !adminUnlocked){
+  document.getElementById('admin-password-modal').classList.remove('hidden');
+  document.getElementById('admin-pw').value='';
+  document.getElementById('admin-pw-error').style.display='none';
+  setTimeout(()=>document.getElementById('admin-pw').focus(),100);
+  return;
+ }
  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
  document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+tab));
  if(tab==='admin') renderAdmin();
  if(tab==='expert') renderExpert();
+}
+
+function verifyAdminPassword(){
+ const pw=document.getElementById('admin-pw').value;
+ if(pw===ADMIN_PASSWORD){
+  adminUnlocked=true;
+  document.getElementById('admin-password-modal').classList.add('hidden');
+  switchTab('admin');
+  toast('Admin access granted','success');
+ } else {
+  document.getElementById('admin-pw-error').style.display='block';
+  document.getElementById('admin-pw').value='';
+  document.getElementById('admin-pw').focus();
+ }
+}
+
+function closeAdminPassword(){
+ document.getElementById('admin-password-modal').classList.add('hidden');
 }
 
 /* ===================================================================
@@ -499,8 +536,54 @@ function shareInstructions(){
    ONBOARDING
    =================================================================== */
 function checkOnboarding(){
- if(!testerInfo){document.getElementById('onboarding-modal').classList.remove('hidden')}
- else{initTester()}
+ if(!testerInfo){
+  document.getElementById('onboarding-modal').classList.remove('hidden');
+  // Check if there are any saved sessions to resume
+  const savedSessions = JSON.parse(localStorage.getItem('amh_saved_sessions') || '{}');
+  if(Object.keys(savedSessions).length > 0){
+   document.getElementById('resume-section').style.display='block';
+  }
+ } else {
+  initTester();
+ }
+}
+
+function resumeSession(){
+ const name = document.getElementById('resume-name').value.trim().toLowerCase();
+ if(!name){document.getElementById('resume-error').textContent='Please enter your name.';document.getElementById('resume-error').style.display='block';return}
+ const savedSessions = JSON.parse(localStorage.getItem('amh_saved_sessions') || '{}');
+ // Find matching session (case-insensitive)
+ const matchKey = Object.keys(savedSessions).find(k => k.toLowerCase() === name);
+ if(!matchKey){
+  document.getElementById('resume-error').textContent='No saved session found for "'+document.getElementById('resume-name').value.trim()+'". Start a new test below.';
+  document.getElementById('resume-error').style.display='block';
+  return;
+ }
+ const session = savedSessions[matchKey];
+ testerInfo = session.testerInfo;
+ testerResults = session.results;
+ saveTesterInfo();
+ saveTesterResults();
+ document.getElementById('onboarding-modal').classList.add('hidden');
+ initTester();
+ const tested = Object.keys(testerResults).length;
+ const pct = Math.round((tested/TOTAL)*100);
+ toast('Welcome back, '+testerInfo.name+'! Resuming at '+pct+'% complete.','success');
+}
+
+function saveResults(){
+ if(!testerInfo){toast('Complete onboarding first','error');return}
+ // Save to sessions storage for resume later
+ const savedSessions = JSON.parse(localStorage.getItem('amh_saved_sessions') || '{}');
+ savedSessions[testerInfo.name] = {
+  testerInfo: testerInfo,
+  results: testerResults,
+  savedAt: now()
+ };
+ localStorage.setItem('amh_saved_sessions', JSON.stringify(savedSessions));
+ // Also export JSON file
+ exportTesterJSON();
+ toast('Results saved! You can resume later by entering your name.','success');
 }
 
 function saveOnboarding(){
@@ -1193,14 +1276,7 @@ function generateExpertReport(){
 /* ===================================================================
    MOBILE SUBMIT & SHARING
    =================================================================== */
-// Show submit bar when at least 50% complete
-function checkSubmitBar() {
-  const bar = document.getElementById('submitBar');
-  if (!bar) return;
-  const tested = Object.keys(testerResults).length;
-  const pct = (tested / TOTAL) * 100;
-  bar.style.display = pct >= 50 ? 'flex' : 'none';
-}
+function checkSubmitBar() { /* no longer needed */ }
 
 // Submit via WhatsApp
 function submitViaWhatsApp() {
