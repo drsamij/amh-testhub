@@ -358,8 +358,8 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
  </div>
 
  <div class="divider"></div>
- <h2 class="section-title">&#128640; Send Report to Developers</h2>
- <p style="color:var(--text-sec);font-size:.85rem;margin-bottom:16px">Choose how to share the test results with the development team.</p>
+ <h2 class="section-title">&#128640; Send Report to Developers <span class="ar-title">إرسال التقرير للمطورين</span></h2>
+ <p style="color:var(--text-sec);font-size:.85rem;margin-bottom:16px">Choose how to share the test results with the development team. <span class="ar" style="display:inline">اختر طريقة مشاركة نتائج الاختبار مع فريق التطوير.</span></p>
 
  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px">
   <select id="report-scope" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.88rem;background:var(--card)">
@@ -376,8 +376,8 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
   <!-- Email to Dev Team -->
   <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid var(--blue)">
    <div style="font-size:1.2rem;margin-bottom:6px">&#128231;</div>
-   <h4 style="font-size:.92rem;margin-bottom:4px">Email to Developers</h4>
-   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Opens email client with formatted defect report &amp; environment details.</p>
+   <h4 style="font-size:.92rem;margin-bottom:4px">Email to Developers <span class="ar-title">البريد الإلكتروني</span></h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Opens email client with formatted defect report. <span class="ar" style="display:inline">يفتح عميل البريد مع تقرير الأخطاء.</span></p>
    <div class="form-group" style="margin-bottom:8px"><input type="email" id="dev-email" placeholder="dev-team@kfshrc.edu.sa" style="font-size:.82rem;padding:8px 10px"></div>
    <button class="btn btn-pri btn-sm" style="width:100%" onclick="sendDevEmail()">&#128232; Compose Email</button>
   </div>
@@ -385,41 +385,43 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
   <!-- WhatsApp -->
   <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid #25D366">
    <div style="font-size:1.2rem;margin-bottom:6px">&#128172;</div>
-   <h4 style="font-size:.92rem;margin-bottom:4px">WhatsApp / Chat</h4>
-   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Copy concise bug report formatted for WhatsApp or any chat app.</p>
+   <h4 style="font-size:.92rem;margin-bottom:4px">WhatsApp / Chat <span class="ar-title">واتساب</span></h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Copy bug report formatted for WhatsApp or chat. <span class="ar" style="display:inline">نسخ تقرير الأخطاء لواتساب أو الدردشة.</span></p>
    <button class="btn btn-sm" style="width:100%;background:#25D366;color:#fff" onclick="shareDevWhatsApp()">&#128172; Send via WhatsApp</button>
-   <button class="btn btn-outline btn-sm mt-12" style="width:100%" onclick="copyDevReport()">&#128203; Copy to Clipboard</button>
+   <button class="btn btn-outline btn-sm" style="width:100%;margin-top:8px" onclick="copyDevReport()">&#128203; Copy to Clipboard</button>
   </div>
 
   <!-- Teams -->
   <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid #6264A7">
    <div style="font-size:1.2rem;margin-bottom:6px">&#128188;</div>
-   <h4 style="font-size:.92rem;margin-bottom:4px">Microsoft Teams</h4>
-   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Formatted summary with tables ready for Teams channels.</p>
+   <h4 style="font-size:.92rem;margin-bottom:4px">Microsoft Teams <span class="ar-title">مايكروسوفت تيمز</span></h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Formatted summary ready for Teams channels. <span class="ar" style="display:inline">ملخص جاهز لقنوات تيمز.</span></p>
    <button class="btn btn-sm" style="width:100%;background:#6264A7;color:#fff" onclick="copyForTeams('expert')">&#128203; Copy for Teams</button>
   </div>
 
   <!-- HTML Report -->
   <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid var(--pri)">
    <div style="font-size:1.2rem;margin-bottom:6px">&#128196;</div>
-   <h4 style="font-size:.92rem;margin-bottom:4px">Full HTML Report</h4>
-   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Professional report with charts summary, module health &amp; defect register.</p>
+   <h4 style="font-size:.92rem;margin-bottom:4px">Full HTML Report <span class="ar-title">تقرير HTML</span></h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Professional report with charts, module health &amp; defects. <span class="ar" style="display:inline">تقرير احترافي مع الرسوم البيانية والأخطاء.</span></p>
    <button class="btn btn-pri btn-sm" style="width:100%" onclick="generateExpertReport()">&#128229; Download HTML</button>
   </div>
 
   <!-- CSV / Excel -->
   <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid var(--green)">
    <div style="font-size:1.2rem;margin-bottom:6px">&#128202;</div>
-   <h4 style="font-size:.92rem;margin-bottom:4px">CSV (for Jira / Excel)</h4>
-   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Importable into Jira, Azure DevOps, Excel, or Google Sheets.</p>
+   <h4 style="font-size:.92rem;margin-bottom:4px">CSV (for Jira / Excel) <span class="ar-title">ملف CSV</span></h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Importable into Jira, Azure DevOps, Excel, or Sheets. <span class="ar" style="display:inline">قابل للاستيراد في جيرا أو إكسل.</span></p>
    <button class="btn btn-green btn-sm" style="width:100%" onclick="exportDevCSV()">&#128229; Download CSV</button>
   </div>
 
   <!-- Telegram -->
   <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid #0088cc">
    <div style="font-size:1.2rem;margin-bottom:6px">&#128233;</div>
-   <h4 style="font-size:.92rem;margin-bottom:4px">Telegram Bot</h4>
-   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Send summary directly to your Telegram channel or group.</p>
+   <h4 style="font-size:.92rem;margin-bottom:4px">Telegram <span class="ar-title">تيليجرام</span></h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Send summary to your Telegram channel. <span class="ar" style="display:inline">إرسال الملخص لقناة تيليجرام.</span></p>
+   <div class="form-group" style="margin-bottom:4px"><input type="text" id="tg-bot-token" placeholder="Bot token" style="font-size:.82rem;padding:8px 10px"></div>
+   <div class="form-group" style="margin-bottom:8px"><input type="text" id="tg-chat-id" placeholder="Chat ID" style="font-size:.82rem;padding:8px 10px"></div>
    <button class="btn btn-sm" style="width:100%;background:#0088cc;color:#fff" onclick="sendToTelegram()">&#128233; Send to Telegram</button>
   </div>
 
@@ -1660,14 +1662,20 @@ function exportDevCSV(){
 
 function sendToTelegram(){
  const txt=buildDevSummaryText();
- // Use Telegram Bot API if configured, otherwise open share link
- const TELEGRAM_BOT_TOKEN='7745390860:AAGrdajKaIzqrpR2jyWXphqUd6TSvqJjEFM';
- const TELEGRAM_CHAT_ID='8388890620';
+ const token=document.getElementById('tg-bot-token').value.trim();
+ const chatId=document.getElementById('tg-chat-id').value.trim();
 
- fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{
+ if(!token||!chatId){
+  // No credentials configured — fall back to Telegram share URL
+  window.open(`https://t.me/share/url?url=${encodeURIComponent('AMH Bug Report')}&text=${encodeURIComponent(txt)}`,'_blank');
+  toast('Opened Telegram share...','info');
+  return;
+ }
+
+ fetch(`https://api.telegram.org/bot${token}/sendMessage`,{
   method:'POST',
   headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text:txt,parse_mode:'',disable_web_page_preview:true})
+  body:JSON.stringify({chat_id:chatId,text:txt,parse_mode:'',disable_web_page_preview:true})
  })
  .then(res=>res.json())
  .then(data=>{
@@ -1675,7 +1683,6 @@ function sendToTelegram(){
   else toast('Telegram error: '+data.description,'error');
  })
  .catch(()=>{
-  // Fallback: open Telegram share URL
   window.open(`https://t.me/share/url?url=${encodeURIComponent('AMH Bug Report')}&text=${encodeURIComponent(txt)}`,'_blank');
   toast('Opened Telegram share...','info');
  });
