@@ -2,69 +2,87 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0d7c5f">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230d7c5f' width='100' height='100' rx='20'/><text x='50' y='65' text-anchor='middle' fill='white' font-size='50' font-family='Arial'>🏥</text></svg>">
-<title>AMH Patient App — Test Hub</title>
+<title>AMH Patient App — Test Hub v3.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--pri:#0d7c5f;--pri-dark:#095e48;--pri-light:#e4f5ef;--pri-hover:#0a6b52;--bg:#f4f6f8;--card:#fff;--text:#1a1a2e;--text-sec:#5a6170;--border:#e2e6ea;--red:#dc3545;--red-bg:#fde8ea;--orange:#f0850e;--orange-bg:#fff3e0;--green:#28a745;--green-bg:#e4f5ef;--blue:#0d6efd;--blue-bg:#e7f0ff;--radius:10px;--shadow:0 2px 8px rgba(0,0,0,.06);--shadow-lg:0 4px 20px rgba(0,0,0,.1)}
+:root{--pri:#0d7c5f;--pri-dark:#095e48;--pri-light:#e4f5ef;--pri-hover:#0a6b52;--bg:#f4f6f8;--card:#fff;--text:#1a1a2e;--text-sec:#5a6170;--border:#e2e6ea;--red:#dc3545;--red-bg:#fde8ea;--orange:#f0850e;--orange-bg:#fff3e0;--green:#28a745;--green-bg:#e4f5ef;--blue:#0d6efd;--blue-bg:#e7f0ff;--purple:#6f42c1;--purple-bg:#f0ebf8;--yellow:#ffc107;--yellow-bg:#fff8e1;--radius:10px;--shadow:0 2px 8px rgba(0,0,0,.06);--shadow-lg:0 4px 20px rgba(0,0,0,.1)}
 html{font-size:15px;scroll-behavior:smooth}
-body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
+body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;padding-bottom:20px}
 .ar{font-family:'Noto Kufi Arabic','DM Sans',sans-serif;direction:rtl}
 
 /* TOAST */
 #toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:8px}
 .toast{padding:12px 20px;border-radius:var(--radius);color:#fff;font-weight:500;font-size:.88rem;box-shadow:var(--shadow-lg);animation:slideIn .3s ease,fadeOut .3s ease 2.7s;opacity:0;animation-fill-mode:forwards}
-.toast.success{background:var(--green)}.toast.error{background:var(--red)}.toast.info{background:var(--blue)}
+.toast.success{background:var(--green)}.toast.error{background:var(--red)}.toast.info{background:var(--blue)}.toast.warning{background:var(--orange)}
 @keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes fadeOut{to{opacity:0;transform:translateY(-10px)}}
 
 /* HEADER */
-.app-header{background:linear-gradient(135deg,var(--pri-dark),var(--pri));color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:1000}
-.app-header h1{font-size:1.25rem;font-weight:700;letter-spacing:-.3px}
-.app-header h1 small{font-weight:400;opacity:.8;font-size:.75rem;display:block}
+.app-header{background:linear-gradient(135deg,var(--pri-dark),var(--pri));color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:1000}
+.app-header h1{font-size:1.2rem;font-weight:700;letter-spacing:-.3px}
+.app-header h1 small{font-weight:400;opacity:.8;font-size:.72rem;display:block}
 .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.header-meta{display:flex;gap:12px;align-items:center;font-size:.75rem;opacity:.9}
+.header-meta span{display:flex;align-items:center;gap:4px}
+.save-indicator{width:8px;height:8px;border-radius:50%;display:inline-block}
+.save-indicator.saved{background:#4ade80}.save-indicator.saving{background:#fbbf24;animation:pulse 1s infinite}
+.save-indicator.unsaved{background:#f87171}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:var(--radius);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
-.btn-white{background:#fff;color:var(--pri)}
-.btn-white:hover{background:var(--pri-light)}
+.btn-white{background:#fff;color:var(--pri)}.btn-white:hover{background:var(--pri-light)}
 .btn-pri{background:var(--pri);color:#fff}.btn-pri:hover{background:var(--pri-dark)}
 .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--pri);color:var(--pri)}
 .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#c82333}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#218838}
 .btn-sm{padding:6px 12px;font-size:.8rem}
 .btn-xs{padding:4px 8px;font-size:.75rem}
+.btn:disabled{opacity:.5;cursor:not-allowed}
 
 /* TABS */
-.tab-bar{display:flex;background:var(--card);border-bottom:2px solid var(--border);position:sticky;top:60px;z-index:999}
-.tab-btn{flex:1;padding:14px;text-align:center;font-weight:600;font-size:.95rem;cursor:pointer;border:none;background:transparent;color:var(--text-sec);transition:all .2s;border-bottom:3px solid transparent}
+.tab-bar{display:flex;background:var(--card);border-bottom:2px solid var(--border);position:sticky;top:56px;z-index:999}
+.tab-btn{flex:1;padding:12px;text-align:center;font-weight:600;font-size:.9rem;cursor:pointer;border:none;background:transparent;color:var(--text-sec);transition:all .2s;border-bottom:3px solid transparent}
 .tab-btn.active{color:var(--pri);border-bottom-color:var(--pri);background:var(--pri-light)}
 .tab-btn:hover:not(.active){background:#f9fafb}
 .tab-content{display:none;padding:20px;max-width:1200px;margin:0 auto}
 .tab-content.active{display:block}
 
+/* SESSION BAR */
+.session-bar{background:var(--card);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:.82rem;max-width:1200px;margin:0 auto 16px;border-radius:var(--radius);box-shadow:var(--shadow)}
+.session-bar .tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-weight:500;font-size:.78rem}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-orange{background:var(--orange-bg);color:var(--orange)}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px}
-.modal{background:var(--card);border-radius:16px;padding:32px;max-width:480px;width:100%;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal{background:var(--card);border-radius:16px;padding:32px;max-width:500px;width:100%;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
 .modal h2{color:var(--pri);margin-bottom:4px}.modal p.sub{color:var(--text-sec);font-size:.88rem;margin-bottom:20px}
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-weight:600;font-size:.85rem;margin-bottom:6px;color:var(--text)}
-.form-group input,.form-group select{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.9rem;transition:border .2s}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px rgba(13,124,95,.12)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.9rem;transition:border .2s}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px rgba(13,124,95,.12)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
 /* PROGRESS */
-.progress-wrap{background:var(--card);padding:16px 20px;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px}
+.progress-wrap{background:var(--card);padding:16px 20px;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:16px}
 .progress-bar-outer{height:10px;background:#e9ecef;border-radius:99px;overflow:hidden;margin-top:8px}
 .progress-bar-inner{height:100%;background:linear-gradient(90deg,var(--pri),#28a745);border-radius:99px;transition:width .4s ease}
-.progress-stats{display:flex;justify-content:space-between;font-size:.82rem;color:var(--text-sec);margin-top:6px}
+.progress-stats{display:flex;justify-content:space-between;font-size:.8rem;color:var(--text-sec);margin-top:6px;flex-wrap:wrap;gap:4px}
 
 /* FILTERS */
 .filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
-.filter-bar input[type=text]{flex:1;min-width:200px;padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.88rem}
+.filter-bar input[type=text]{flex:1;min-width:180px;padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.88rem}
 .filter-bar input:focus{outline:none;border-color:var(--pri)}
 .filter-bar select{padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.88rem;background:var(--card)}
 
@@ -72,30 +90,45 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
 .module-group{margin-bottom:16px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:var(--card)}
 .module-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;cursor:pointer;background:var(--card);border-bottom:1px solid var(--border);user-select:none;transition:background .2s}
 .module-header:hover{background:#f9fafb}
-.module-header h3{font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:8px}
-.module-header .ar-title{font-family:'Noto Kufi Arabic',sans-serif;direction:rtl;font-size:.85rem;color:var(--text-sec);font-weight:500}
-.module-header .badge{font-size:.75rem;padding:2px 10px;border-radius:99px;font-weight:600}
-.badge-g{background:var(--green-bg);color:var(--green)}.badge-r{background:var(--red-bg);color:var(--red)}.badge-o{background:var(--orange-bg);color:var(--orange)}.badge-b{background:var(--blue-bg);color:var(--blue)}
+.module-header h3{font-size:.92rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.module-header .ar-title{font-family:'Noto Kufi Arabic',sans-serif;direction:rtl;font-size:.82rem;color:var(--text-sec);font-weight:500}
+.module-header .badge{font-size:.72rem;padding:2px 10px;border-radius:99px;font-weight:600}
+.badge-g{background:var(--green-bg);color:var(--green)}.badge-r{background:var(--red-bg);color:var(--red)}.badge-o{background:var(--orange-bg);color:var(--orange)}.badge-b{background:var(--blue-bg);color:var(--blue)}.badge-p{background:var(--purple-bg);color:var(--purple)}.badge-y{background:var(--yellow-bg);color:#b8860b}
 .module-header .chevron{transition:transform .3s;font-size:.8rem}
 .module-group.collapsed .module-body{display:none}
 .module-group.collapsed .chevron{transform:rotate(-90deg)}
 .module-body{padding:0}
+.priority-indicator{font-size:.65rem;padding:1px 6px;border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.pri-high{background:#fde8ea;color:var(--red)}.pri-medium{background:var(--orange-bg);color:var(--orange)}.pri-low{background:var(--blue-bg);color:var(--blue)}
 
 /* SCENARIO CARD */
-.scenario-card{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid #f0f0f0;transition:background .15s}
+.scenario-card{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-bottom:1px solid #f0f0f0;transition:background .15s}
 .scenario-card:last-child{border-bottom:none}
 .scenario-card:hover{background:#fafbfc}
-.sc-id{font-size:.78rem;font-weight:700;color:var(--pri);background:var(--pri-light);padding:3px 8px;border-radius:6px;white-space:nowrap;min-width:52px;text-align:center}
+.scenario-card.highlighted{background:#fffde7;border-left:3px solid var(--yellow)}
+.sc-id{font-size:.75rem;font-weight:700;color:var(--pri);background:var(--pri-light);padding:3px 8px;border-radius:6px;white-space:nowrap;min-width:52px;text-align:center;margin-top:2px}
 .sc-titles{flex:1;min-width:0}
-.sc-titles .en{font-size:.88rem;font-weight:500}.sc-titles .ar{font-family:'Noto Kufi Arabic',sans-serif;direction:rtl;font-size:.8rem;color:var(--text-sec)}
-.sc-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
-.status-btn{padding:6px 12px;border:2px solid var(--border);border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;background:var(--card);transition:all .2s;white-space:nowrap}
+.sc-titles .en{font-size:.86rem;font-weight:500}.sc-titles .ar{font-family:'Noto Kufi Arabic',sans-serif;direction:rtl;font-size:.78rem;color:var(--text-sec)}
+.sc-titles .expected{font-size:.74rem;color:var(--blue);margin-top:2px;font-style:italic}
+.sc-actions{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap}
+.status-btn{padding:5px 10px;border:2px solid var(--border);border-radius:8px;font-size:.74rem;font-weight:600;cursor:pointer;background:var(--card);transition:all .2s;white-space:nowrap}
 .status-btn:hover{transform:translateY(-1px)}
 .status-btn.working{border-color:var(--green);background:var(--green-bg);color:var(--green)}
 .status-btn.not-working{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.status-btn.blocked{border-color:var(--purple);background:var(--purple-bg);color:var(--purple)}
 .status-btn.na{border-color:var(--orange);background:var(--orange-bg);color:var(--orange)}
-.bug-select{margin-top:4px;padding:4px 8px;font-size:.78rem;border:1.5px solid var(--red);border-radius:6px;color:var(--red);background:var(--red-bg);font-family:inherit;width:100%}
 .sc-extra{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:120px}
+.sc-defect-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px;padding:8px 12px;background:#fef2f2;border-radius:8px;border:1px solid #fecaca;width:100%}
+.sc-defect-bar select,.sc-defect-bar textarea{font-family:inherit;font-size:.78rem;border:1px solid #fca5a5;border-radius:6px;padding:4px 8px;background:#fff}
+.sc-defect-bar select{min-width:100px}
+.sc-defect-bar textarea{flex:1;min-width:140px;min-height:32px;resize:vertical}
+.severity-badge{font-size:.68rem;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase}
+.sev-critical{background:#dc3545;color:#fff}.sev-major{background:#f0850e;color:#fff}.sev-minor{background:#ffc107;color:#333}.sev-cosmetic{background:#6c757d;color:#fff}
+
+/* NOTES TOGGLE */
+.notes-toggle{font-size:.72rem;color:var(--blue);cursor:pointer;border:none;background:none;padding:2px 4px;text-decoration:underline}
+.sc-notes{width:100%;margin-top:6px}
+.sc-notes textarea{width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:.78rem;min-height:40px;resize:vertical}
 
 /* ADMIN */
 .drop-zone{border:2.5px dashed var(--border);border-radius:16px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .3s;background:var(--card)}
@@ -106,16 +139,16 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
 .tester-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid var(--pri)}
 .tester-card h4{font-size:.95rem;margin-bottom:4px}.tester-card .meta{font-size:.78rem;color:var(--text-sec);margin-bottom:10px}
 .tester-card .stats{display:flex;gap:12px;font-size:.82rem;font-weight:600}
-.stat-g{color:var(--green)}.stat-r{color:var(--red)}.stat-o{color:var(--orange)}
+.stat-g{color:var(--green)}.stat-r{color:var(--red)}.stat-o{color:var(--orange)}.stat-p{color:var(--purple)}
 .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px;margin:20px 0}
 .chart-box{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
 .chart-box h3{font-size:.95rem;margin-bottom:12px;color:var(--text)}
 .chart-box canvas{max-height:320px}
 
 /* EXPERT */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
-.kpi-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);text-align:center}
-.kpi-card .value{font-size:2rem;font-weight:700}.kpi-card .label{font-size:.82rem;color:var(--text-sec);margin-top:2px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.kpi-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);text-align:center}
+.kpi-card .value{font-size:1.8rem;font-weight:700}.kpi-card .label{font-size:.78rem;color:var(--text-sec);margin-top:2px}
 .readiness-card{background:var(--card);border-radius:16px;padding:28px;box-shadow:var(--shadow-lg);text-align:center;margin-bottom:24px}
 .readiness-score{font-size:4rem;font-weight:700;line-height:1}.readiness-verdict{font-size:1.2rem;font-weight:600;margin-top:4px}
 .health-table{width:100%;border-collapse:collapse;font-size:.85rem;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
@@ -129,72 +162,65 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
 .compare-table td{padding:8px 12px;border-bottom:1px solid var(--border)}
 .compare-table .conflict{background:#fff8e1}
 
-/* RISK TABLE */
+/* RISK / BUG TABLE */
 .risk-list{list-style:none;padding:0}
 .risk-list li{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-
-/* BUG TABLE */
 .bug-table{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
 .bug-table th{background:var(--red);color:#fff;padding:8px 12px;text-align:left;font-weight:600}
 .bug-table td{padding:8px 12px;border-bottom:1px solid var(--border)}
 
+/* COMPLETION SCREEN */
+.completion-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px}
+.completion-card{background:#fff;border-radius:20px;padding:40px;max-width:520px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:bounceIn .5s ease}
+@keyframes bounceIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.completion-card .big-icon{font-size:4rem;margin-bottom:12px}
+.completion-card h2{font-size:1.5rem;color:var(--pri);margin-bottom:8px}
+.completion-card .verdict-box{padding:16px;border-radius:12px;margin:16px 0;font-weight:700;font-size:1.1rem}
+.verdict-go{background:var(--green-bg);color:var(--green);border:2px solid var(--green)}
+.verdict-conditional{background:var(--orange-bg);color:var(--orange);border:2px solid var(--orange)}
+.verdict-nogo{background:var(--red-bg);color:var(--red);border:2px solid var(--red)}
+
+/* FOOTER */
+.app-footer{text-align:center;padding:24px;font-size:.75rem;color:var(--text-sec);border-top:1px solid var(--border);margin-top:32px}
+
 /* RESPONSIVE */
 @media(max-width:768px){
- html { font-size: 16px; }
- .app-header { padding: 12px 16px; position: sticky; top: 0; }
- .app-header h1 { font-size: 1.1rem; }
- .tab-bar { position: sticky; top: 52px; }
- .tab-btn { padding: 12px 8px; font-size: .85rem; }
- .tab-content { padding: 12px; }
-
- /* Hide Admin/Expert tabs by default on mobile - show via secret */
- .tab-btn[data-tab="admin"],
- .tab-btn[data-tab="expert"] { display: none; }
- .tab-btn[data-tab="admin"].unlocked,
- .tab-btn[data-tab="expert"].unlocked { display: block; }
-
- /* Scenario cards - bigger buttons for thumbs */
- .scenario-card { flex-direction:column;align-items:stretch;gap:8px; padding: 14px; }
- .sc-actions { display: flex; gap: 6px; justify-content:center; }
- .sc-actions .status-btn { min-height: 48px; flex: 1; justify-content: center; font-size: .9rem; padding: 12px 8px; border-radius: 12px; display:flex;align-items:center; }
+ html{font-size:16px}
+ .app-header{padding:10px 14px;position:sticky;top:0}
+ .app-header h1{font-size:1rem}
+ .header-meta{display:none}
+ .tab-bar{position:sticky;top:44px}
+ .tab-btn{padding:10px 6px;font-size:.82rem}
+ .tab-content{padding:12px}
+ .tab-btn[data-tab="admin"],.tab-btn[data-tab="expert"]{display:none}
+ .tab-btn[data-tab="admin"].unlocked,.tab-btn[data-tab="expert"].unlocked{display:block}
+ .scenario-card{flex-direction:column;align-items:stretch;gap:8px;padding:14px}
+ .sc-actions{display:flex;gap:6px;justify-content:center}
+ .sc-actions .status-btn{min-height:44px;flex:1;justify-content:center;font-size:.82rem;padding:10px 6px;border-radius:10px;display:flex;align-items:center}
  .sc-extra{align-items:center;min-width:auto}
-
- /* Add bottom padding for save button */
- body { padding-bottom: 20px; }
-
- /* Module headers bigger */
- .module-header { min-height: 48px; }
-
- /* Progress bar thicker */
- .progress-bar-outer { height: 10px; }
-
- /* Filter/search compact */
- .filter-bar { flex-direction: column; gap: 8px; }
- .filter-bar input[type=text], .filter-bar select { min-width: auto; width: 100%; min-height: 44px; font-size: 1rem; }
-
+ .sc-defect-bar{flex-direction:column}
+ .session-bar{flex-direction:column;gap:8px;font-size:.78rem}
+ .form-row{grid-template-columns:1fr}
+ .module-header{min-height:48px}
+ .progress-bar-outer{height:10px}
+ .filter-bar{flex-direction:column;gap:8px}
+ .filter-bar input[type=text],.filter-bar select{min-width:auto;width:100%;min-height:44px;font-size:1rem}
  .kpi-grid{grid-template-columns:repeat(2,1fr)}
  .chart-grid{grid-template-columns:1fr}
  .modal{padding:24px;margin:12px}
+ body{padding-bottom:20px}
 }
 @media(max-width:480px){
- .tab-bar{top:52px}
+ .tab-bar{top:44px}
  .kpi-grid{grid-template-columns:1fr 1fr}
- .status-btn{padding:5px 8px;font-size:.72rem}
+ .status-btn{padding:5px 6px;font-size:.72rem}
 }
-
-/* Swipe hint animation */
-@keyframes swipeHint { 0%,100% { transform: translateX(0); } 50% { transform: translateX(10px); } }
-
-/* Submit floating button for mobile */
-.fab-submit { display: none; position: fixed; bottom: 20px; right: 20px; width: 64px; height: 64px; border-radius: 50%; background: var(--pri); color: white; border: none; font-size: 24px; box-shadow: 0 4px 14px rgba(13,124,95,.4); z-index: 900; cursor: pointer; transition: transform .2s; }
-.fab-submit:active { transform: scale(.9); }
-@media (max-width: 768px) { .fab-submit { display: flex; align-items: center; justify-content: center; } }
 
 /* UTILITY */
 .hidden{display:none!important}
-.mt-16{margin-top:16px}.mt-20{margin-top:20px}.mt-24{margin-top:24px}.mb-16{margin-bottom:16px}
+.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-20{margin-top:20px}.mt-24{margin-top:24px}.mb-16{margin-bottom:16px}
 .text-center{text-align:center}
-.section-title{font-size:1.1rem;font-weight:700;margin-bottom:16px;color:var(--text);display:flex;align-items:center;gap:8px}
+.section-title{font-size:1.05rem;font-weight:700;margin-bottom:16px;color:var(--text);display:flex;align-items:center;gap:8px}
 .divider{height:1px;background:var(--border);margin:24px 0}
 .flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 </style>
@@ -205,12 +231,17 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
 <div id="toast-container"></div>
 
 <!-- HEADER -->
-<header class="app-header">
+<header class="app-header" id="app-header">
  <div>
-  <h1>AMH Patient App — Test Hub<small>King Faisal Specialist Hospital &amp; Research Centre</small></h1>
+  <h1>AMH Patient App &#8212; Test Hub <span style="font-size:.7rem;opacity:.7">v3.0</span><small>King Faisal Specialist Hospital &amp; Research Centre</small></h1>
+ </div>
+ <div class="header-meta" id="header-meta">
+  <span><span class="save-indicator saved" id="save-dot"></span> Auto-saved</span>
+  <span id="session-timer">&#9201; 00:00</span>
+  <span id="header-run-id"></span>
  </div>
  <div class="header-actions">
-  <button class="btn btn-white btn-sm" onclick="shareInstructions()">&#128203; Share This Tool</button>
+  <button class="btn btn-white btn-sm" onclick="shareInstructions()">&#128279; Share Link</button>
  </div>
 </header>
 
@@ -223,14 +254,14 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
 
 <!-- ==================== TESTER TAB ==================== -->
 <div id="tab-tester" class="tab-content active">
- <!-- PWA Install Banner -->
- <div id="pwa-banner" style="background:var(--pri-light);border:1px solid var(--pri);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;font-size:.88rem;">
-  <span style="font-size:24px;">&#128242;</span>
-  <div>
-   <strong>Add to Home Screen</strong> for quick access!<br>
-   <span style="color:var(--text-sec);font-size:.82rem;">Tap &#8942; (Android) or &#128228; (iPhone) &rarr; "Add to Home Screen"</span>
-  </div>
-  <button onclick="this.parentElement.style.display='none';localStorage.setItem('pwa_dismissed','1')" style="margin-left:auto;background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-sec);">&#10005;</button>
+
+ <!-- Session Info Bar -->
+ <div class="session-bar" id="session-info" style="display:none">
+  <span>&#128100; <strong id="si-name"></strong></span>
+  <span class="tag tag-blue" id="si-device"></span>
+  <span class="tag tag-green" id="si-env"></span>
+  <span class="tag tag-purple" id="si-runid"></span>
+  <span class="tag tag-orange" id="si-rate"></span>
  </div>
 
  <!-- Progress -->
@@ -238,25 +269,28 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
 
  <!-- Filters -->
  <div class="filter-bar">
-  <input type="text" id="search-input" placeholder="Search scenarios..." oninput="renderScenarios()">
+  <input type="text" id="search-input" placeholder="&#128269; Search scenarios..." oninput="renderScenarios()">
   <select id="filter-module" onchange="renderScenarios()"><option value="all">All Modules</option></select>
   <select id="filter-status" onchange="renderScenarios()">
    <option value="all">All Statuses</option>
-   <option value="working">Working</option>
-   <option value="not-working">Not Working</option>
-   <option value="na">N/A</option>
-   <option value="untested">Untested</option>
+   <option value="working">&#10004; Working</option>
+   <option value="not-working">&#10008; Not Working</option>
+   <option value="blocked">&#128683; Blocked</option>
+   <option value="na">&#9203; N/A</option>
+   <option value="untested">&#9898; Untested</option>
   </select>
+  <button class="btn btn-pri btn-sm" onclick="jumpToNextUntested()" title="Jump to next untested scenario">&#9193; Next Untested</button>
   <button class="btn btn-outline btn-sm" onclick="toggleAllModules(true)">Expand All</button>
-  <button class="btn btn-outline btn-sm" onclick="toggleAllModules(false)">Collapse All</button>
+  <button class="btn btn-outline btn-sm" onclick="toggleAllModules(false)">Collapse</button>
  </div>
 
  <!-- Scenarios Container -->
  <div id="scenarios-container"></div>
 
  <!-- Actions -->
- <div class="flex-between mt-24" style="justify-content:center">
-  <button class="btn btn-pri" onclick="saveResults()" style="min-width:200px;min-height:48px;font-size:1rem;">&#128190; Save Results</button>
+ <div class="flex-between mt-24" style="justify-content:center;gap:12px">
+  <button class="btn btn-pri" onclick="saveResults()" style="min-width:180px;min-height:48px;font-size:1rem;">&#128190; Save Results</button>
+  <button class="btn btn-red btn-sm" onclick="resetTesterData()">&#128465; Reset</button>
  </div>
 </div>
 
@@ -269,109 +303,116 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
   <input type="file" id="file-input" multiple accept=".json" style="display:none" onchange="handleFiles(this.files)">
  </div>
 
- <!-- Tester Cards -->
  <div id="admin-tester-cards" class="tester-cards"></div>
 
- <!-- Charts -->
+ <!-- Defect Density Summary -->
+ <div id="admin-defect-summary" style="display:none" class="mt-16">
+  <h2 class="section-title">&#128200; Defect Density</h2>
+  <div class="kpi-grid" id="defect-density-kpis"></div>
+ </div>
+
  <div class="chart-grid" id="admin-charts" style="display:none">
   <div class="chart-box"><h3>Results per Tester</h3><canvas id="chart-bar-testers"></canvas></div>
   <div class="chart-box"><h3>Issues by Module</h3><canvas id="chart-doughnut-modules"></canvas></div>
+  <div class="chart-box"><h3>Severity Distribution</h3><canvas id="chart-severity"></canvas></div>
  </div>
 
- <!-- Cross-Device Comparison -->
  <div id="admin-comparison" style="display:none" class="mt-24">
   <h2 class="section-title">&#9888;&#65039; Cross-Device Comparison</h2>
   <div style="overflow-x:auto"><table class="compare-table" id="comparison-table"></table></div>
  </div>
 
- <!-- Bug List -->
  <div id="admin-bugs" style="display:none" class="mt-24">
-  <h2 class="section-title">&#128027; De-duplicated Bug List</h2>
+  <h2 class="section-title">&#128027; Defect Register</h2>
   <div style="overflow-x:auto"><table class="bug-table" id="bug-table"></table></div>
  </div>
 
- <!-- Admin Actions -->
  <div class="flex-between mt-24" id="admin-actions" style="display:none">
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-   <button class="btn btn-pri" onclick="exportAdminHTML()">&#128196; Export HTML Report</button>
+   <button class="btn btn-pri" onclick="exportAdminHTML()">&#128196; Export Report</button>
    <button class="btn btn-outline" onclick="exportAdminCSV()">&#128202; Export CSV</button>
    <button class="btn btn-outline" onclick="copyForTeams('admin')">&#128203; Copy for Teams</button>
   </div>
-  <button class="btn btn-red btn-sm" onclick="clearAdminData()">&#128465; Clear Data</button>
+  <button class="btn btn-red btn-sm" onclick="clearAdminData()">&#128465; Clear</button>
  </div>
 </div>
 
 <!-- ==================== EXPERT TAB ==================== -->
 <div id="tab-expert" class="tab-content">
- <!-- KPI Cards -->
  <div class="kpi-grid" id="expert-kpis"></div>
-
- <!-- Readiness -->
  <div class="readiness-card" id="readiness-card"></div>
 
- <!-- Module Health -->
  <h2 class="section-title mt-24">&#127973; Module Health</h2>
  <div style="overflow-x:auto"><table class="health-table" id="health-table"></table></div>
 
- <!-- Risk Areas -->
  <div class="mt-24" id="risk-section">
   <h2 class="section-title">&#9888;&#65039; Risk Areas</h2>
   <ul class="risk-list" id="risk-list"></ul>
  </div>
 
- <!-- Expert Charts -->
  <div class="chart-grid mt-24">
   <div class="chart-box"><h3>Status Distribution</h3><canvas id="chart-expert-doughnut"></canvas></div>
   <div class="chart-box"><h3>Coverage per Module</h3><canvas id="chart-expert-bar"></canvas></div>
   <div class="chart-box"><h3>Module Comparison Radar</h3><canvas id="chart-expert-radar"></canvas></div>
-  <div class="chart-box"><h3>Priority Breakdown</h3><canvas id="chart-expert-priority"></canvas></div>
+  <div class="chart-box"><h3>Severity Breakdown</h3><canvas id="chart-expert-severity"></canvas></div>
  </div>
 
- <!-- Report Generator -->
  <div class="divider"></div>
  <h2 class="section-title">&#128196; Generate Report</h2>
  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
   <select id="report-scope" class="form-group" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit">
    <option value="all">All Scenarios</option>
    <option value="failures">Failures Only</option>
+   <option value="blocked">Blocked Only</option>
    <option value="na">N/A Only</option>
   </select>
-  <button class="btn btn-pri" onclick="generateExpertReport()">Generate HTML Report</button>
+  <button class="btn btn-pri" onclick="generateExpertReport()">Generate Report</button>
   <button class="btn btn-outline" onclick="copyForTeams('expert')">&#128203; Copy for Teams</button>
  </div>
 
- <!-- Expert Data Source -->
  <div class="divider"></div>
  <h2 class="section-title">&#128229; Data Source</h2>
- <p style="color:var(--text-sec);font-size:.88rem;margin-bottom:12px">Load data from tester results or manually set statuses.</p>
+ <p style="color:var(--text-sec);font-size:.88rem;margin-bottom:12px">Load from tester results or manually.</p>
  <div style="display:flex;gap:8px;flex-wrap:wrap">
-  <button class="btn btn-outline btn-sm" onclick="loadExpertFromAdmin()">Import from Admin Data</button>
-  <button class="btn btn-outline btn-sm" onclick="document.getElementById('expert-file-input').click()">Upload Tester JSONs</button>
+  <button class="btn btn-outline btn-sm" onclick="loadExpertFromAdmin()">Import from Admin</button>
+  <button class="btn btn-outline btn-sm" onclick="document.getElementById('expert-file-input').click()">Upload JSONs</button>
   <input type="file" id="expert-file-input" multiple accept=".json" style="display:none" onchange="handleExpertFiles(this.files)">
  </div>
 </div>
 
+<!-- FOOTER -->
+<footer class="app-footer">
+ AMH Test Hub v3.0 &bull; Built for KFSH&amp;RC Almather Hospital &bull; IEEE 829 Aligned &bull; ISTQB Best Practices
+</footer>
+
 <!-- ==================== ONBOARDING MODAL ==================== -->
 <div class="modal-overlay hidden" id="onboarding-modal">
  <div class="modal">
-  <h2>Welcome, Tester!</h2>
-  <p class="sub">Please fill in your device details to get started.</p>
+  <h2>&#128203; AMH Test Hub v3.0</h2>
+  <p class="sub">Professional Testing Platform &#8212; Enter your details to begin.</p>
 
-  <!-- Resume section - shown if saved sessions exist -->
   <div id="resume-section" style="display:none;margin-bottom:20px;padding:16px;background:var(--pri-light);border-radius:var(--radius);border:1px solid var(--pri);">
-   <p style="font-weight:600;color:var(--pri);margin-bottom:8px;">&#128260; Continue previous test?</p>
-   <div class="form-group" style="margin-bottom:8px"><label>Enter your name to resume</label><input type="text" id="resume-name" placeholder="e.g. Ahmed" style="margin-top:4px"></div>
+   <p style="font-weight:600;color:var(--pri);margin-bottom:8px;">&#128260; Resume previous session?</p>
+   <div class="form-group" style="margin-bottom:8px"><label>Enter your name</label><input type="text" id="resume-name" placeholder="e.g. Ahmed" style="margin-top:4px"></div>
    <button class="btn btn-pri" style="width:100%" onclick="resumeSession()">Continue Testing</button>
    <p id="resume-error" style="color:var(--red);font-size:.82rem;margin-top:6px;display:none"></p>
-   <div style="text-align:center;margin-top:12px;color:var(--text-sec);font-size:.82rem">— or start fresh below —</div>
+   <div style="text-align:center;margin-top:12px;color:var(--text-sec);font-size:.82rem">&#8212; or start new session &#8212;</div>
   </div>
 
-  <div class="form-group"><label>Your Name</label><input type="text" id="ob-name" placeholder="e.g. Ahmed"></div>
-  <div class="form-group"><label>Operating System</label><select id="ob-os"><option value="">Select...</option><option>iOS</option><option>Android</option></select></div>
-  <div class="form-group"><label>Device Model</label><select id="ob-device"><option value="">Select...</option><optgroup label="Apple"><option>iPhone 16 Pro Max</option><option>iPhone 16 Pro</option><option>iPhone 16</option><option>iPhone 15 Pro Max</option><option>iPhone 15 Pro</option><option>iPhone 15</option><option>iPhone 14 Pro Max</option><option>iPhone 14</option><option>iPhone 13</option><option>iPad Pro 12.9"</option><option>iPad Air</option><option>iPad 10th Gen</option></optgroup><optgroup label="Samsung"><option>Samsung S25 Ultra</option><option>Samsung S25</option><option>Samsung S24 Ultra</option><option>Samsung S24</option><option>Samsung S23 Ultra</option><option>Samsung S23</option><option>Samsung Z Fold 6</option><option>Samsung Z Flip 6</option><option>Samsung A55</option><option>Samsung A35</option><option>Samsung A15</option><option>Samsung Tab S9</option></optgroup><optgroup label="Huawei"><option>Huawei Pura 70 Pro</option><option>Huawei Mate 60 Pro</option><option>Huawei Nova 12</option></optgroup><optgroup label="Other"><option>Google Pixel 9</option><option>Honor Magic 6</option><option>Xiaomi 14</option><option>Other</option></optgroup></select></div>
-  <div class="form-group"><label>App Version</label><input type="text" id="ob-version" placeholder="e.g. 1.0.3"></div>
-  <div class="form-group"><label>Network Type</label><select id="ob-network"><option value="">Select...</option><option>WiFi (Hospital)</option><option>WiFi (Home)</option><option>4G/LTE</option><option>5G</option></select></div>
-  <button class="btn btn-pri" style="width:100%;margin-top:8px" onclick="saveOnboarding()">Start Testing</button>
+  <div class="form-group"><label>Full Name <span style="color:var(--red)">*</span></label><input type="text" id="ob-name" placeholder="e.g. Ahmed Alharbi"></div>
+  <div class="form-row">
+   <div class="form-group"><label>Operating System <span style="color:var(--red)">*</span></label><select id="ob-os"><option value="">Select...</option><option>iOS 18</option><option>iOS 17</option><option>iOS 16</option><option>Android 15</option><option>Android 14</option><option>Android 13</option><option>Android 12</option></select></div>
+   <div class="form-group"><label>Device <span style="color:var(--red)">*</span></label><select id="ob-device"><option value="">Select...</option><optgroup label="Apple"><option>iPhone 16 Pro Max</option><option>iPhone 16 Pro</option><option>iPhone 16</option><option>iPhone 15 Pro Max</option><option>iPhone 15 Pro</option><option>iPhone 15</option><option>iPhone 14 Pro Max</option><option>iPhone 14</option><option>iPhone 13</option><option>iPad Pro 12.9"</option><option>iPad Air</option><option>iPad 10th Gen</option></optgroup><optgroup label="Samsung"><option>Samsung S25 Ultra</option><option>Samsung S25</option><option>Samsung S24 Ultra</option><option>Samsung S24</option><option>Samsung S23 Ultra</option><option>Samsung S23</option><option>Samsung Z Fold 6</option><option>Samsung Z Flip 6</option><option>Samsung A55</option><option>Samsung A35</option><option>Samsung A15</option><option>Samsung Tab S9</option></optgroup><optgroup label="Huawei"><option>Huawei Pura 70 Pro</option><option>Huawei Mate 60 Pro</option><option>Huawei Nova 12</option></optgroup><optgroup label="Other"><option>Google Pixel 9</option><option>Honor Magic 6</option><option>Xiaomi 14</option><option>Other</option></optgroup></select></div>
+  </div>
+  <div class="form-row">
+   <div class="form-group"><label>App Version <span style="color:var(--red)">*</span></label><input type="text" id="ob-version" placeholder="e.g. 1.0.3"></div>
+   <div class="form-group"><label>Network</label><select id="ob-network"><option value="">Select...</option><option>WiFi (Hospital)</option><option>WiFi (Home)</option><option>4G/LTE</option><option>5G</option></select></div>
+  </div>
+  <!-- Auto-detected environment -->
+  <div style="padding:10px 14px;background:#f8f9fa;border-radius:8px;font-size:.78rem;color:var(--text-sec);margin-bottom:16px">
+   <strong>Auto-detected:</strong> <span id="auto-env">detecting...</span>
+  </div>
+  <button class="btn btn-pri" style="width:100%;min-height:48px;font-size:1rem" onclick="saveOnboarding()">&#128640; Start Testing</button>
  </div>
 </div>
 
@@ -379,9 +420,9 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
 <div class="modal-overlay hidden" id="admin-password-modal">
  <div class="modal" style="text-align:center">
   <h2>&#128274; Admin Access</h2>
-  <p class="sub">Enter the admin password to continue.</p>
+  <p class="sub">Enter admin password to continue.</p>
   <div class="form-group"><input type="password" id="admin-pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')verifyAdminPassword()"></div>
-  <p id="admin-pw-error" style="color:var(--red);font-size:.82rem;display:none">Incorrect password. Try again.</p>
+  <p id="admin-pw-error" style="color:var(--red);font-size:.82rem;display:none">Incorrect password.</p>
   <div style="display:flex;gap:8px">
    <button class="btn btn-outline" style="flex:1" onclick="closeAdminPassword()">Cancel</button>
    <button class="btn btn-pri" style="flex:1" onclick="verifyAdminPassword()">&#128275; Unlock</button>
@@ -389,75 +430,86 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
  </div>
 </div>
 
+<!-- ==================== COMPLETION MODAL ==================== -->
+<div class="completion-overlay hidden" id="completion-modal">
+ <div class="completion-card" id="completion-card"></div>
+</div>
+
 <script>
 /* ===================================================================
-   DATA: ALL MODULES AND SCENARIOS
+   AMH TEST HUB v3.0 — Professional Testing Platform
+   IEEE 829 Test Execution Log | ISTQB Foundation Aligned
+   =================================================================== */
+
+/* ===================================================================
+   DATA: MODULES AND SCENARIOS WITH EXPECTED RESULTS
    =================================================================== */
 const MODULES = [
   { id:'M1', name:'Login & Authentication', nameAr:'تسجيل الدخول', priority:'high', scenarios:[
-    {id:'LG-01',en:'Login with valid credentials',ar:'تسجيل الدخول ببيانات صحيحة',defaultNA:false},
-    {id:'LG-02',en:'Remember Me functionality',ar:'خاصية تذكرني',defaultNA:false},
-    {id:'LG-03',en:'Forgot Password flow',ar:'استعادة كلمة المرور',defaultNA:false}
+    {id:'LG-01',en:'Login with valid credentials',ar:'تسجيل الدخول ببيانات صحيحة',expected:'User lands on dashboard within 3s',defaultNA:false},
+    {id:'LG-02',en:'Remember Me functionality',ar:'خاصية تذكرني',expected:'Credentials persist after app restart',defaultNA:false},
+    {id:'LG-03',en:'Forgot Password flow',ar:'استعادة كلمة المرور',expected:'Reset link sent and password changed successfully',defaultNA:false}
   ]},
   { id:'M2', name:'Dashboard & Home', nameAr:'الصفحة الرئيسية', priority:'high', scenarios:[
-    {id:'DH-01',en:'Dashboard loads within 3 seconds',ar:'تحميل الصفحة خلال 3 ثوانٍ',defaultNA:false},
-    {id:'DH-02',en:'Arabic RTL layout displays correctly',ar:'عرض الواجهة العربية بشكل صحيح',defaultNA:false},
-    {id:'DH-03',en:'Quick action buttons work',ar:'أزرار الإجراءات السريعة تعمل',defaultNA:false}
+    {id:'DH-01',en:'Dashboard loads within 3 seconds',ar:'تحميل الصفحة خلال 3 ثوانٍ',expected:'All widgets visible within 3s on stable connection',defaultNA:false},
+    {id:'DH-02',en:'Arabic RTL layout displays correctly',ar:'عرض الواجهة العربية بشكل صحيح',expected:'All text, icons, and navigation mirror correctly',defaultNA:false},
+    {id:'DH-03',en:'Quick action buttons work',ar:'أزرار الإجراءات السريعة تعمل',expected:'Each button navigates to correct section',defaultNA:false}
   ]},
   { id:'M3', name:'Appointments', nameAr:'المواعيد', priority:'high', scenarios:[
-    {id:'AP-01',en:'View upcoming appointments',ar:'عرض المواعيد القادمة',defaultNA:false},
-    {id:'AP-02',en:'Reschedule an appointment',ar:'إعادة جدولة موعد',defaultNA:false},
-    {id:'AP-03',en:'Cancel an appointment',ar:'إلغاء موعد',defaultNA:false},
-    {id:'AP-04',en:'Receive confirmation notifications',ar:'استلام إشعارات التأكيد',defaultNA:false},
-    {id:'AP-05',en:'View appointment history',ar:'عرض سجل المواعيد',defaultNA:false}
+    {id:'AP-01',en:'View upcoming appointments',ar:'عرض المواعيد القادمة',expected:'List shows date, time, doctor, clinic correctly',defaultNA:false},
+    {id:'AP-02',en:'Reschedule an appointment',ar:'إعادة جدولة موعد',expected:'New date saved and confirmation displayed',defaultNA:false},
+    {id:'AP-03',en:'Cancel an appointment',ar:'إلغاء موعد',expected:'Appointment removed from list after confirmation',defaultNA:false},
+    {id:'AP-04',en:'Receive confirmation notifications',ar:'استلام إشعارات التأكيد',expected:'Push notification received within 30s',defaultNA:false},
+    {id:'AP-05',en:'View appointment history',ar:'عرض سجل المواعيد',expected:'Past appointments listed with correct dates',defaultNA:false}
   ]},
   { id:'M4', name:'Medical Records', nameAr:'السجلات الطبية', priority:'high', scenarios:[
-    {id:'MR-01',en:'View visit summaries',ar:'عرض ملخصات الزيارات',defaultNA:false},
-    {id:'MR-02',en:'View allergies list',ar:'عرض قائمة الحساسية',defaultNA:false},
-    {id:'MR-03',en:'View immunization records',ar:'عرض سجل التطعيمات',defaultNA:false}
+    {id:'MR-01',en:'View visit summaries',ar:'عرض ملخصات الزيارات',expected:'Summary shows diagnosis, medications, notes',defaultNA:false},
+    {id:'MR-02',en:'View allergies list',ar:'عرض قائمة الحساسية',expected:'All recorded allergies displayed with severity',defaultNA:false},
+    {id:'MR-03',en:'View immunization records',ar:'عرض سجل التطعيمات',expected:'Immunization history with dates shown',defaultNA:false}
   ]},
   { id:'M5', name:'Payments', nameAr:'المدفوعات', priority:'medium', scenarios:[
-    {id:'PY-01',en:'View outstanding invoices',ar:'عرض الفواتير المستحقة',defaultNA:true},
-    {id:'PY-02',en:'Make a payment',ar:'إجراء دفعة',defaultNA:true},
-    {id:'PY-03',en:'View payment history',ar:'عرض سجل المدفوعات',defaultNA:true}
+    {id:'PY-01',en:'View outstanding invoices',ar:'عرض الفواتير المستحقة',expected:'Invoice list with amounts and due dates',defaultNA:true},
+    {id:'PY-02',en:'Make a payment',ar:'إجراء دفعة',expected:'Payment processed and receipt generated',defaultNA:true},
+    {id:'PY-03',en:'View payment history',ar:'عرض سجل المدفوعات',expected:'Transaction history with status indicators',defaultNA:true}
   ]},
   { id:'M6', name:'Telehealth', nameAr:'الطب عن بُعد', priority:'medium', scenarios:[
-    {id:'TH-01',en:'Join video consultation',ar:'الانضمام لاستشارة فيديو',defaultNA:true},
-    {id:'TH-02',en:'In-call chat functionality',ar:'الدردشة أثناء المكالمة',defaultNA:true}
+    {id:'TH-01',en:'Join video consultation',ar:'الانضمام لاستشارة فيديو',expected:'Video and audio connected within 10s',defaultNA:true},
+    {id:'TH-02',en:'In-call chat functionality',ar:'الدردشة أثناء المكالمة',expected:'Messages sent/received during active call',defaultNA:true}
   ]},
   { id:'M7', name:'Notifications', nameAr:'الإشعارات', priority:'medium', scenarios:[
-    {id:'NT-01',en:'View notification center',ar:'عرض مركز الإشعارات',defaultNA:false},
-    {id:'NT-02',en:'Receive push notifications (app closed)',ar:'استلام إشعارات (التطبيق مغلق)',defaultNA:true},
-    {id:'NT-03',en:'Deep link from notification opens correct page',ar:'الروابط تفتح الصفحة الصحيحة',defaultNA:true}
+    {id:'NT-01',en:'View notification center',ar:'عرض مركز الإشعارات',expected:'All notifications listed chronologically',defaultNA:false},
+    {id:'NT-02',en:'Receive push notifications (app closed)',ar:'استلام إشعارات (التطبيق مغلق)',expected:'Notification appears on lock screen',defaultNA:true},
+    {id:'NT-03',en:'Deep link from notification opens correct page',ar:'الروابط تفتح الصفحة الصحيحة',expected:'Tapping notification opens relevant screen',defaultNA:true}
   ]},
   { id:'M8', name:'Profile & Settings', nameAr:'الملف الشخصي', priority:'medium', scenarios:[
-    {id:'PS-01',en:'View personal information',ar:'عرض المعلومات الشخصية',defaultNA:false},
-    {id:'PS-02',en:'Update contact information',ar:'تحديث معلومات الاتصال',defaultNA:false},
-    {id:'PS-03',en:'Change password',ar:'تغيير كلمة المرور',defaultNA:false},
-    {id:'PS-04',en:'Switch language (EN↔AR)',ar:'تبديل اللغة',defaultNA:false},
-    {id:'PS-05',en:'Logout successfully',ar:'تسجيل الخروج بنجاح',defaultNA:false}
+    {id:'PS-01',en:'View personal information',ar:'عرض المعلومات الشخصية',expected:'Name, MRN, DOB, contact shown correctly',defaultNA:false},
+    {id:'PS-02',en:'Update contact information',ar:'تحديث معلومات الاتصال',expected:'Changes saved and reflected immediately',defaultNA:false},
+    {id:'PS-03',en:'Change password',ar:'تغيير كلمة المرور',expected:'New password accepted after validation',defaultNA:false},
+    {id:'PS-04',en:'Switch language (EN↔AR)',ar:'تبديل اللغة',expected:'Full UI switches language without reload',defaultNA:false},
+    {id:'PS-05',en:'Logout successfully',ar:'تسجيل الخروج بنجاح',expected:'Session cleared and login screen shown',defaultNA:false}
   ]},
   { id:'M9', name:'Patient Education', nameAr:'تثقيف المريض', priority:'low', scenarios:[
-    {id:'PE-01',en:'Browse health articles',ar:'تصفح المقالات الصحية',defaultNA:false},
-    {id:'PE-02',en:'View pre-procedure instructions',ar:'تعليمات ما قبل الإجراء',defaultNA:true},
-    {id:'PE-03',en:'View post-discharge instructions',ar:'تعليمات ما بعد الخروج',defaultNA:true}
+    {id:'PE-01',en:'Browse health articles',ar:'تصفح المقالات الصحية',expected:'Articles load with images and formatting',defaultNA:false},
+    {id:'PE-02',en:'View pre-procedure instructions',ar:'تعليمات ما قبل الإجراء',expected:'Instructions displayed with checklist items',defaultNA:true},
+    {id:'PE-03',en:'View post-discharge instructions',ar:'تعليمات ما بعد الخروج',expected:'Discharge plan with medications and follow-up',defaultNA:true}
   ]},
   { id:'M10', name:'General & UI', nameAr:'عام وواجهة المستخدم', priority:'high', scenarios:[
-    {id:'GU-01',en:'App loads under 3 seconds',ar:'تحميل التطبيق خلال 3 ثوانٍ',defaultNA:false},
-    {id:'GU-02',en:'Arabic RTL layout correct',ar:'التخطيط العربي صحيح',defaultNA:false},
-    {id:'GU-03',en:'Offline mode shows appropriate message',ar:'رسالة عدم الاتصال',defaultNA:false},
-    {id:'GU-04',en:'Back button navigates correctly',ar:'زر الرجوع يعمل بشكل صحيح',defaultNA:false},
-    {id:'GU-05',en:'Keyboard doesn\'t overlap input fields',ar:'لوحة المفاتيح لا تغطي الحقول',defaultNA:false},
-    {id:'GU-06',en:'Pull-to-refresh works',ar:'السحب للتحديث يعمل',defaultNA:false},
-    {id:'GU-07',en:'Prayer times display',ar:'عرض مواقيت الصلاة',defaultNA:false},
-    {id:'GU-08',en:'Contact hospital directory',ar:'دليل الاتصال بالمستشفى',defaultNA:false},
-    {id:'GU-09',en:'Submit feedback/complaint',ar:'تقديم ملاحظات/شكوى',defaultNA:false},
-    {id:'GU-10',en:'App handles incoming calls gracefully',ar:'التطبيق يتعامل مع المكالمات الواردة',defaultNA:false},
-    {id:'GU-11',en:'Force close and reopen app',ar:'إغلاق وإعادة فتح التطبيق',defaultNA:false}
+    {id:'GU-01',en:'App loads under 3 seconds',ar:'تحميل التطبيق خلال 3 ثوانٍ',expected:'Splash screen to home in <3s on 4G',defaultNA:false},
+    {id:'GU-02',en:'Arabic RTL layout correct',ar:'التخطيط العربي صحيح',expected:'No overlapping text, correct alignment',defaultNA:false},
+    {id:'GU-03',en:'Offline mode shows appropriate message',ar:'رسالة عدم الاتصال',expected:'Friendly message with retry option',defaultNA:false},
+    {id:'GU-04',en:'Back button navigates correctly',ar:'زر الرجوع يعمل بشكل صحيح',expected:'Returns to previous screen, not random page',defaultNA:false},
+    {id:'GU-05',en:'Keyboard doesn\'t overlap input fields',ar:'لوحة المفاتيح لا تغطي الحقول',expected:'Viewport scrolls to keep input visible',defaultNA:false},
+    {id:'GU-06',en:'Pull-to-refresh works',ar:'السحب للتحديث يعمل',expected:'Content refreshes with loading indicator',defaultNA:false},
+    {id:'GU-07',en:'Prayer times display',ar:'عرض مواقيت الصلاة',expected:'Correct prayer times for hospital location',defaultNA:false},
+    {id:'GU-08',en:'Contact hospital directory',ar:'دليل الاتصال بالمستشفى',expected:'Phone numbers callable, addresses mapped',defaultNA:false},
+    {id:'GU-09',en:'Submit feedback/complaint',ar:'تقديم ملاحظات/شكوى',expected:'Form submits and confirmation shown',defaultNA:false},
+    {id:'GU-10',en:'App handles incoming calls gracefully',ar:'التطبيق يتعامل مع المكالمات الواردة',expected:'App state preserved after call ends',defaultNA:false},
+    {id:'GU-11',en:'Force close and reopen app',ar:'إغلاق وإعادة فتح التطبيق',expected:'App resumes from same state or fresh login',defaultNA:false}
   ]}
 ];
 
-const BUG_TYPES = ['UI Bug','Crash','Slow Performance','Wrong Data','Missing Feature','Other'];
+const SEVERITIES = ['Critical','Major','Minor','Cosmetic'];
+const BUG_TYPES = ['Functional','UI/Layout','Performance','Crash','Data','Security','Accessibility','Localization','Other'];
 const ALL_SCENARIOS = MODULES.flatMap(m => m.scenarios.map(s => ({...s, module:m.name, moduleId:m.id, moduleAr:m.nameAr, priority:m.priority})));
 const TOTAL = ALL_SCENARIOS.length;
 
@@ -469,10 +521,14 @@ let testerResults = JSON.parse(localStorage.getItem('amh_tester_results') || '{}
 let adminData = JSON.parse(localStorage.getItem('amh_admin_data') || '[]');
 let expertData = JSON.parse(localStorage.getItem('amh_expert_data') || '{}');
 let collapsedModules = JSON.parse(localStorage.getItem('amh_collapsed') || '{}');
+let sessionStartTime = null;
+let sessionTimerInterval = null;
+let autoSaveTimeout = null;
+let lastSaveTime = null;
 
 // Charts
-let chartBarTesters=null, chartDoughnutModules=null;
-let chartExpertDoughnut=null, chartExpertBar=null, chartExpertRadar=null, chartExpertPriority=null;
+let chartBarTesters=null, chartDoughnutModules=null, chartSeverity=null;
+let chartExpertDoughnut=null, chartExpertBar=null, chartExpertRadar=null, chartExpertSeverity=null;
 
 /* ===================================================================
    UTILS
@@ -480,11 +536,72 @@ let chartExpertDoughnut=null, chartExpertBar=null, chartExpertRadar=null, chartE
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function toast(msg,type='success'){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),3200)}
 function now(){return new Date().toISOString()}
+function generateRunId(){return 'TR-'+Date.now().toString(36).toUpperCase().slice(-6)}
 
-function saveTesterResults(){localStorage.setItem('amh_tester_results',JSON.stringify(testerResults))}
+function saveTesterResults(){
+ localStorage.setItem('amh_tester_results',JSON.stringify(testerResults));
+ triggerAutoSave();
+}
 function saveTesterInfo(){localStorage.setItem('amh_tester_info',JSON.stringify(testerInfo))}
 function saveAdminData(){localStorage.setItem('amh_admin_data',JSON.stringify(adminData))}
 function saveExpertData(){localStorage.setItem('amh_expert_data',JSON.stringify(expertData))}
+
+/* ===================================================================
+   AUTO-SAVE INDICATOR
+   =================================================================== */
+function triggerAutoSave(){
+ const dot=document.getElementById('save-dot');
+ if(dot){dot.className='save-indicator saving'}
+ clearTimeout(autoSaveTimeout);
+ autoSaveTimeout=setTimeout(()=>{
+  // Save to sessions
+  if(testerInfo){
+   const sessions=JSON.parse(localStorage.getItem('amh_saved_sessions')||'{}');
+   sessions[testerInfo.name]={testerInfo,results:testerResults,savedAt:now()};
+   localStorage.setItem('amh_saved_sessions',JSON.stringify(sessions));
+  }
+  if(dot){dot.className='save-indicator saved'}
+  lastSaveTime=new Date();
+ },800);
+}
+
+/* ===================================================================
+   SESSION TIMER
+   =================================================================== */
+function startSessionTimer(){
+ sessionStartTime=testerInfo?.startedAt?new Date(testerInfo.startedAt):new Date();
+ clearInterval(sessionTimerInterval);
+ sessionTimerInterval=setInterval(updateTimer,1000);
+ updateTimer();
+}
+
+function updateTimer(){
+ if(!sessionStartTime)return;
+ const diff=Math.floor((Date.now()-sessionStartTime.getTime())/1000);
+ const h=Math.floor(diff/3600);
+ const m=Math.floor((diff%3600)/60);
+ const s=diff%60;
+ const el=document.getElementById('session-timer');
+ if(el) el.textContent=`⏱ ${h?h+':':''}${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+/* ===================================================================
+   ENVIRONMENT AUTO-DETECT
+   =================================================================== */
+function detectEnvironment(){
+ const ua=navigator.userAgent;
+ let browser='Unknown';
+ if(ua.includes('Chrome')&&!ua.includes('Edg'))browser='Chrome';
+ else if(ua.includes('Safari')&&!ua.includes('Chrome'))browser='Safari';
+ else if(ua.includes('Firefox'))browser='Firefox';
+ else if(ua.includes('Edg'))browser='Edge';
+ const screen=`${window.screen.width}x${window.screen.height}`;
+ const conn=navigator.connection?navigator.connection.effectiveType:'unknown';
+ const lang=navigator.language;
+ const el=document.getElementById('auto-env');
+ if(el) el.textContent=`${browser} | ${screen} | ${conn.toUpperCase()} | ${lang}`;
+ return {browser,screenRes:screen,connection:conn,language:lang,userAgent:ua.substring(0,120)};
+}
 
 /* ===================================================================
    TABS
@@ -507,8 +624,7 @@ function switchTab(tab){
 }
 
 function verifyAdminPassword(){
- const pw=document.getElementById('admin-pw').value;
- if(pw===ADMIN_PASSWORD){
+ if(document.getElementById('admin-pw').value===ADMIN_PASSWORD){
   adminUnlocked=true;
   document.getElementById('admin-password-modal').classList.add('hidden');
   switchTab('admin');
@@ -520,16 +636,16 @@ function verifyAdminPassword(){
  }
 }
 
-function closeAdminPassword(){
- document.getElementById('admin-password-modal').classList.add('hidden');
-}
+function closeAdminPassword(){document.getElementById('admin-password-modal').classList.add('hidden')}
 
 /* ===================================================================
    SHARE
    =================================================================== */
 function shareInstructions(){
- const txt=`AMH Patient App \u2014 Test Hub\n\n1. Open the attached HTML file in Chrome/Edge\n2. Select your role: Tester\n3. Fill your device info and start testing\n4. When done, click "Export Results"\n5. Send the JSON file to [Admin Name]`;
- navigator.clipboard.writeText(txt).then(()=>toast('Instructions copied to clipboard!')).catch(()=>toast('Copy failed','error'));
+ const url=window.location.href;
+ const txt=`AMH Patient App — Test Hub v3.0\n\n🔗 ${url}\n\n1. Open the link on your phone\n2. Fill your device info\n3. Test each scenario\n4. Click "Save Results" when done\n5. Share the JSON file with admin`;
+ if(navigator.share){navigator.share({title:'AMH Test Hub',text:txt,url}).catch(()=>{})}
+ else{navigator.clipboard.writeText(txt).then(()=>toast('Link & instructions copied!')).catch(()=>toast('Copy failed','error'))}
 }
 
 /* ===================================================================
@@ -538,83 +654,91 @@ function shareInstructions(){
 function checkOnboarding(){
  if(!testerInfo){
   document.getElementById('onboarding-modal').classList.remove('hidden');
-  // Check if there are any saved sessions to resume
-  const savedSessions = JSON.parse(localStorage.getItem('amh_saved_sessions') || '{}');
-  if(Object.keys(savedSessions).length > 0){
+  const sessions=JSON.parse(localStorage.getItem('amh_saved_sessions')||'{}');
+  if(Object.keys(sessions).length>0){
    document.getElementById('resume-section').style.display='block';
   }
+  detectEnvironment();
  } else {
   initTester();
  }
 }
 
 function resumeSession(){
- const name = document.getElementById('resume-name').value.trim().toLowerCase();
+ const name=document.getElementById('resume-name').value.trim().toLowerCase();
  if(!name){document.getElementById('resume-error').textContent='Please enter your name.';document.getElementById('resume-error').style.display='block';return}
- const savedSessions = JSON.parse(localStorage.getItem('amh_saved_sessions') || '{}');
- // Find matching session (case-insensitive)
- const matchKey = Object.keys(savedSessions).find(k => k.toLowerCase() === name);
+ const sessions=JSON.parse(localStorage.getItem('amh_saved_sessions')||'{}');
+ const matchKey=Object.keys(sessions).find(k=>k.toLowerCase()===name);
  if(!matchKey){
-  document.getElementById('resume-error').textContent='No saved session found for "'+document.getElementById('resume-name').value.trim()+'". Start a new test below.';
+  document.getElementById('resume-error').textContent='No session found for "'+document.getElementById('resume-name').value.trim()+'".';
   document.getElementById('resume-error').style.display='block';
   return;
  }
- const session = savedSessions[matchKey];
- testerInfo = session.testerInfo;
- testerResults = session.results;
+ const session=sessions[matchKey];
+ testerInfo=session.testerInfo;
+ testerResults=session.results;
  saveTesterInfo();
  saveTesterResults();
  document.getElementById('onboarding-modal').classList.add('hidden');
  initTester();
- const tested = Object.keys(testerResults).length;
- const pct = Math.round((tested/TOTAL)*100);
- toast('Welcome back, '+testerInfo.name+'! Resuming at '+pct+'% complete.','success');
-}
-
-function saveResults(){
- if(!testerInfo){toast('Complete onboarding first','error');return}
- // Save to sessions storage for resume later
- const savedSessions = JSON.parse(localStorage.getItem('amh_saved_sessions') || '{}');
- savedSessions[testerInfo.name] = {
-  testerInfo: testerInfo,
-  results: testerResults,
-  savedAt: now()
- };
- localStorage.setItem('amh_saved_sessions', JSON.stringify(savedSessions));
- // Also export JSON file
- exportTesterJSON();
- toast('Results saved! You can resume later by entering your name.','success');
+ const tested=Object.keys(testerResults).length;
+ toast(`Welcome back, ${testerInfo.name}! Resuming at ${Math.round(tested/TOTAL*100)}%`,'success');
 }
 
 function saveOnboarding(){
  const name=document.getElementById('ob-name').value.trim();
  const os=document.getElementById('ob-os').value;
- const device=document.getElementById('ob-device').value.trim();
+ const device=document.getElementById('ob-device').value;
  const version=document.getElementById('ob-version').value.trim();
  const network=document.getElementById('ob-network').value;
- if(!name||!os||!device){toast('Please fill Name, OS, and Device','error');return}
- testerInfo={name,os,device,version,network,startedAt:now()};
+ if(!name||!os||!device||!version){toast('Please fill all required fields (*)','error');return}
+ const env=detectEnvironment();
+ const runId=generateRunId();
+ testerInfo={name,os,device,version,network,runId,startedAt:now(),environment:env};
  saveTesterInfo();
- // Set default N/A scenarios
  ALL_SCENARIOS.forEach(s=>{
   if(s.defaultNA && !testerResults[s.id]){
-   testerResults[s.id]={status:'na',bugType:null,timestamp:now()};
+   testerResults[s.id]={status:'na',severity:null,bugType:null,notes:'',timestamp:now()};
   }
  });
  saveTesterResults();
  document.getElementById('onboarding-modal').classList.add('hidden');
  initTester();
- toast('Welcome, '+esc(name)+'! Start testing.');
+ toast(`Welcome, ${esc(name)}! Test Run: ${runId}`);
 }
 
 /* ===================================================================
    TESTER INIT
    =================================================================== */
 function initTester(){
- // Populate filter
  const sel=document.getElementById('filter-module');
  sel.innerHTML='<option value="all">All Modules</option>'+MODULES.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('');
  renderScenarios();
+ startSessionTimer();
+ updateSessionBar();
+ // Show run ID in header
+ const runEl=document.getElementById('header-run-id');
+ if(runEl && testerInfo?.runId) runEl.textContent='#'+testerInfo.runId;
+}
+
+function updateSessionBar(){
+ const bar=document.getElementById('session-info');
+ if(!testerInfo||!bar)return;
+ bar.style.display='flex';
+ document.getElementById('si-name').textContent=testerInfo.name;
+ document.getElementById('si-device').textContent=`${testerInfo.os} • ${testerInfo.device}`;
+ document.getElementById('si-env').textContent=testerInfo.environment?.browser||'';
+ document.getElementById('si-runid').textContent=testerInfo.runId||'';
+ updateTestRate();
+}
+
+function updateTestRate(){
+ if(!sessionStartTime||!testerInfo)return;
+ const tested=Object.keys(testerResults).length;
+ const mins=Math.max(1,Math.floor((Date.now()-sessionStartTime.getTime())/60000));
+ const rate=(tested/mins*60).toFixed(1);
+ const el=document.getElementById('si-rate');
+ if(el) el.textContent=`${rate} tests/hr`;
 }
 
 /* ===================================================================
@@ -633,7 +757,7 @@ function renderScenarios(){
    const matchMod=modFilter==='all' || mod.id===modFilter;
    const r=testerResults[s.id];
    const status=r?r.status:'untested';
-   const matchStat=statFilter==='all' || status===statFilter || (statFilter==='not-working'&&status==='not-working');
+   const matchStat=statFilter==='all' || status===statFilter;
    return matchSearch && matchMod && matchStat;
   });
   if(scenarios.length===0 && (modFilter!=='all' || search || statFilter!=='all')) return;
@@ -642,15 +766,18 @@ function renderScenarios(){
   const modResults=mod.scenarios.map(s=>testerResults[s.id]);
   const working=modResults.filter(r=>r&&r.status==='working').length;
   const failing=modResults.filter(r=>r&&r.status==='not-working').length;
+  const blocked=modResults.filter(r=>r&&r.status==='blocked').length;
   const tested=modResults.filter(r=>r).length;
   const collapsed=collapsedModules[mod.id]?'collapsed':'';
+  const priClass=mod.priority==='high'?'pri-high':mod.priority==='medium'?'pri-medium':'pri-low';
 
   html+=`<div class="module-group ${collapsed}" data-mod="${mod.id}">
    <div class="module-header" onclick="toggleModule('${mod.id}')">
-    <h3><span class="chevron">&#9660;</span> ${esc(mod.name)} <span class="ar-title">${esc(mod.nameAr)}</span></h3>
-    <div style="display:flex;gap:6px;align-items:center">
+    <h3><span class="chevron">&#9660;</span> ${esc(mod.name)} <span class="ar-title">${esc(mod.nameAr)}</span> <span class="priority-indicator ${priClass}">${mod.priority}</span></h3>
+    <div style="display:flex;gap:5px;align-items:center">
      <span class="badge badge-g">${working}&#10003;</span>
      ${failing?`<span class="badge badge-r">${failing}&#10007;</span>`:''}
+     ${blocked?`<span class="badge badge-p">${blocked}&#128683;</span>`:''}
      <span class="badge badge-b">${tested}/${mod.scenarios.length}</span>
     </div>
    </div>
@@ -659,22 +786,37 @@ function renderScenarios(){
   scenarios.forEach(s=>{
    const r=testerResults[s.id];
    const status=r?r.status:null;
-   html+=`<div class="scenario-card">
+   const hasNotes=r&&r.notes;
+   html+=`<div class="scenario-card" id="sc-${s.id}">
     <span class="sc-id">${s.id}</span>
     <div class="sc-titles">
      <div class="en">${esc(s.en)}</div>
      <div class="ar">${esc(s.ar)}</div>
+     ${s.expected?`<div class="expected">&#127919; Expected: ${esc(s.expected)}</div>`:''}
     </div>
     <div class="sc-extra">
      <div class="sc-actions">
-      <button class="status-btn ${status==='working'?'working':''}" onclick="setStatus('${s.id}','working')">&#10004; Working</button>
-      <button class="status-btn ${status==='not-working'?'not-working':''}" onclick="setStatus('${s.id}','not-working')">&#10008; Not Working</button>
-      <button class="status-btn ${status==='na'?'na':''}" onclick="setStatus('${s.id}','na')">&#9203; N/A</button>
+      <button class="status-btn ${status==='working'?'working':''}" onclick="setStatus('${s.id}','working')">&#10004; Pass</button>
+      <button class="status-btn ${status==='not-working'?'not-working':''}" onclick="setStatus('${s.id}','not-working')">&#10008; Fail</button>
+      <button class="status-btn ${status==='blocked'?'blocked':''}" onclick="setStatus('${s.id}','blocked')">&#128683; Blocked</button>
+      <button class="status-btn ${status==='na'?'na':''}" onclick="setStatus('${s.id}','na')">N/A</button>
      </div>
-     ${status==='not-working'?`<select class="bug-select" onchange="setBugType('${s.id}',this.value)">
-      <option value="">Select bug type...</option>
-      ${BUG_TYPES.map(b=>`<option ${r&&r.bugType===b?'selected':''}>${b}</option>`).join('')}
-     </select>`:''}
+     ${(status==='not-working'||status==='blocked')?`
+     <div class="sc-defect-bar">
+      <select onchange="setSeverity('${s.id}',this.value)" title="Severity">
+       <option value="">Severity...</option>
+       ${SEVERITIES.map(sv=>`<option ${r&&r.severity===sv?'selected':''}>${sv}</option>`).join('')}
+      </select>
+      <select onchange="setBugType('${s.id}',this.value)" title="Defect Type">
+       <option value="">Type...</option>
+       ${BUG_TYPES.map(b=>`<option ${r&&r.bugType===b?'selected':''}>${b}</option>`).join('')}
+      </select>
+      <textarea placeholder="Describe the issue..." oninput="setNotes('${s.id}',this.value)">${r&&r.notes?esc(r.notes):''}</textarea>
+     </div>`:''}
+     ${(status==='working'||status==='na')?`<button class="notes-toggle" onclick="toggleNotes('${s.id}')">&#128221; ${hasNotes?'Edit':'Add'} Notes</button>`:''}
+     <div class="sc-notes hidden" id="notes-${s.id}">
+      <textarea placeholder="Optional observations..." oninput="setNotes('${s.id}',this.value)">${r&&r.notes?esc(r.notes):''}</textarea>
+     </div>
     </div>
    </div>`;
   });
@@ -684,7 +826,8 @@ function renderScenarios(){
 
  container.innerHTML=html;
  renderProgress();
- checkSubmitBar();
+ updateTestRate();
+ checkCompletion();
 }
 
 function toggleModule(id){
@@ -701,33 +844,134 @@ function toggleAllModules(expand){
 }
 
 function setStatus(id,status){
- testerResults[id]={status,bugType:status==='not-working'?(testerResults[id]?.bugType||null):null,timestamp:now()};
+ const prev=testerResults[id];
+ testerResults[id]={
+  status,
+  severity:status==='not-working'||status==='blocked'?(prev?.severity||null):null,
+  bugType:status==='not-working'||status==='blocked'?(prev?.bugType||null):null,
+  notes:prev?.notes||'',
+  timestamp:now(),
+  history:[...(prev?.history||[]),{status:prev?.status||'untested',changedAt:now()}]
+ };
  saveTesterResults();
  renderScenarios();
- checkSubmitBar();
+}
+
+function setSeverity(id,val){
+ if(testerResults[id]){testerResults[id].severity=val||null;saveTesterResults()}
 }
 
 function setBugType(id,type){
- if(testerResults[id]) testerResults[id].bugType=type||null;
- saveTesterResults();
+ if(testerResults[id]){testerResults[id].bugType=type||null;saveTesterResults()}
 }
 
+function setNotes(id,val){
+ if(testerResults[id]){testerResults[id].notes=val;saveTesterResults()}
+ else{testerResults[id]={status:null,severity:null,bugType:null,notes:val,timestamp:now(),history:[]};saveTesterResults()}
+}
+
+function toggleNotes(id){
+ const el=document.getElementById('notes-'+id);
+ if(el) el.classList.toggle('hidden');
+}
+
+/* ===================================================================
+   JUMP TO NEXT UNTESTED
+   =================================================================== */
+function jumpToNextUntested(){
+ const next=ALL_SCENARIOS.find(s=>!testerResults[s.id]);
+ if(!next){toast('All scenarios tested!','info');return}
+ // Expand the module
+ const mod=MODULES.find(m=>m.scenarios.some(s=>s.id===next.id));
+ if(mod && collapsedModules[mod.id]){
+  collapsedModules[mod.id]=false;
+  localStorage.setItem('amh_collapsed',JSON.stringify(collapsedModules));
+  renderScenarios();
+ }
+ setTimeout(()=>{
+  const el=document.getElementById('sc-'+next.id);
+  if(el){
+   el.scrollIntoView({behavior:'smooth',block:'center'});
+   el.classList.add('highlighted');
+   setTimeout(()=>el.classList.remove('highlighted'),3000);
+  }
+ },100);
+ toast(`Next: ${next.id} — ${next.en}`,'info');
+}
+
+/* ===================================================================
+   PROGRESS
+   =================================================================== */
 function renderProgress(){
- const tested=Object.keys(testerResults).length;
+ const tested=Object.keys(testerResults).filter(k=>testerResults[k].status).length;
  const working=Object.values(testerResults).filter(r=>r.status==='working').length;
  const failing=Object.values(testerResults).filter(r=>r.status==='not-working').length;
+ const blocked=Object.values(testerResults).filter(r=>r.status==='blocked').length;
  const na=Object.values(testerResults).filter(r=>r.status==='na').length;
  const pct=Math.round((tested/TOTAL)*100);
+ const testable=TOTAL-na;
+ const passRate=testable>0?Math.round((working/testable)*100):0;
+ const defectDensity=testable>0?(failing/testable*100).toFixed(1):0;
  document.getElementById('tester-progress').innerHTML=`
-  <div class="flex-between"><strong>Testing Progress</strong><span style="font-weight:600;color:var(--pri)">${pct}%</span></div>
+  <div class="flex-between"><strong>Testing Progress</strong><span style="font-weight:700;color:var(--pri)">${pct}% complete</span></div>
   <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:${pct}%"></div></div>
   <div class="progress-stats">
-   <span>&#10004; ${working} Working</span>
-   <span>&#10008; ${failing} Not Working</span>
-   <span>&#9203; ${na} N/A</span>
+   <span style="color:var(--green)">&#10004; ${working} Pass</span>
+   <span style="color:var(--red)">&#10008; ${failing} Fail</span>
+   <span style="color:var(--purple)">&#128683; ${blocked} Blocked</span>
+   <span style="color:var(--orange)">&#9203; ${na} N/A</span>
    <span>&#9898; ${TOTAL-tested} Untested</span>
-   <span>${tested}/${TOTAL} Total</span>
+  </div>
+  <div style="display:flex;gap:16px;margin-top:8px;font-size:.78rem;color:var(--text-sec)">
+   <span>Pass Rate: <strong style="color:${passRate>=80?'var(--green)':passRate>=60?'var(--orange)':'var(--red)'}">${passRate}%</strong></span>
+   <span>Defect Density: <strong style="color:${defectDensity<=5?'var(--green)':defectDensity<=15?'var(--orange)':'var(--red)'}">${defectDensity}%</strong></span>
+   <span>Coverage: <strong>${tested}/${TOTAL}</strong></span>
   </div>`;
+}
+
+/* ===================================================================
+   COMPLETION CHECK
+   =================================================================== */
+function checkCompletion(){
+ const tested=Object.keys(testerResults).filter(k=>testerResults[k].status).length;
+ if(tested===TOTAL && !window._completionShown){
+  window._completionShown=true;
+  setTimeout(showCompletionSummary,500);
+ }
+}
+
+function showCompletionSummary(){
+ const working=Object.values(testerResults).filter(r=>r.status==='working').length;
+ const failing=Object.values(testerResults).filter(r=>r.status==='not-working').length;
+ const blocked=Object.values(testerResults).filter(r=>r.status==='blocked').length;
+ const na=Object.values(testerResults).filter(r=>r.status==='na').length;
+ const testable=TOTAL-na;
+ const passRate=testable>0?Math.round((working/testable)*100):0;
+ const criticals=Object.values(testerResults).filter(r=>r.severity==='Critical').length;
+
+ let verdict,verdictClass,icon;
+ if(passRate>=90 && criticals===0){verdict='GO — Ready for Release';verdictClass='verdict-go';icon='&#9989;'}
+ else if(passRate>=70 && criticals<=2){verdict='CONDITIONAL — Fix Critical Issues';verdictClass='verdict-conditional';icon='&#9888;&#65039;'}
+ else{verdict='NO-GO — Significant Defects Found';verdictClass='verdict-nogo';icon='&#128721;'}
+
+ const card=document.getElementById('completion-card');
+ card.innerHTML=`
+  <div class="big-icon">&#127881;</div>
+  <h2>Testing Complete!</h2>
+  <p style="color:var(--text-sec)">All ${TOTAL} scenarios have been evaluated.</p>
+  <div class="verdict-box ${verdictClass}">${icon} ${verdict}</div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0;text-align:center">
+   <div style="padding:12px;background:var(--green-bg);border-radius:8px"><div style="font-size:1.5rem;font-weight:700;color:var(--green)">${working}</div><div style="font-size:.78rem;color:var(--text-sec)">Passed</div></div>
+   <div style="padding:12px;background:var(--red-bg);border-radius:8px"><div style="font-size:1.5rem;font-weight:700;color:var(--red)">${failing}</div><div style="font-size:.78rem;color:var(--text-sec)">Failed</div></div>
+   <div style="padding:12px;background:var(--purple-bg);border-radius:8px"><div style="font-size:1.5rem;font-weight:700;color:var(--purple)">${blocked}</div><div style="font-size:.78rem;color:var(--text-sec)">Blocked</div></div>
+   <div style="padding:12px;background:var(--blue-bg);border-radius:8px"><div style="font-size:1.5rem;font-weight:700;color:var(--blue)">${passRate}%</div><div style="font-size:.78rem;color:var(--text-sec)">Pass Rate</div></div>
+  </div>
+  ${criticals?`<p style="color:var(--red);font-weight:600">&#9888; ${criticals} Critical defect${criticals>1?'s':''} found</p>`:''}
+  <div style="display:flex;gap:8px;margin-top:16px">
+   <button class="btn btn-pri" style="flex:1" onclick="saveResults();document.getElementById('completion-modal').classList.add('hidden')">&#128190; Save & Export</button>
+   <button class="btn btn-outline" style="flex:1" onclick="document.getElementById('completion-modal').classList.add('hidden')">Review Results</button>
+  </div>`;
+ document.getElementById('completion-modal').classList.remove('hidden');
 }
 
 /* ===================================================================
@@ -735,35 +979,51 @@ function renderProgress(){
    =================================================================== */
 function exportTesterJSON(){
  if(!testerInfo){toast('Complete onboarding first','error');return}
+ const working=Object.values(testerResults).filter(r=>r.status==='working').length;
+ const failing=Object.values(testerResults).filter(r=>r.status==='not-working').length;
+ const blocked=Object.values(testerResults).filter(r=>r.status==='blocked').length;
+ const na=Object.values(testerResults).filter(r=>r.status==='na').length;
+ const criticals=Object.values(testerResults).filter(r=>r.severity==='Critical').length;
+ const majors=Object.values(testerResults).filter(r=>r.severity==='Major').length;
  const data={
-  toolVersion:'2.0',
+  toolVersion:'3.0',
+  standard:'IEEE 829 Aligned',
   exportedAt:now(),
   tester:testerInfo,
   totalScenarios:TOTAL,
   results:testerResults,
-  summary:{
-   working:Object.values(testerResults).filter(r=>r.status==='working').length,
-   notWorking:Object.values(testerResults).filter(r=>r.status==='not-working').length,
-   na:Object.values(testerResults).filter(r=>r.status==='na').length,
-   untested:TOTAL-Object.keys(testerResults).length
-  }
+  summary:{working,notWorking:failing,blocked,na,untested:TOTAL-Object.keys(testerResults).filter(k=>testerResults[k].status).length},
+  severitySummary:{critical:criticals,major:majors,minor:Object.values(testerResults).filter(r=>r.severity==='Minor').length,cosmetic:Object.values(testerResults).filter(r=>r.severity==='Cosmetic').length},
+  defectDensity:((failing/(TOTAL-na))*100).toFixed(2)+'%',
+  passRate:(((working)/(TOTAL-na))*100).toFixed(2)+'%'
  };
  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
  const a=document.createElement('a');
  a.href=URL.createObjectURL(blob);
- a.download=`AMH_Test_${testerInfo.name.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.json`;
+ a.download=`AMH_Test_${testerInfo.name.replace(/\s+/g,'_')}_${testerInfo.runId||''}_${new Date().toISOString().slice(0,10)}.json`;
  a.click();
  toast('Results exported!');
 }
 
+function saveResults(){
+ if(!testerInfo){toast('Complete onboarding first','error');return}
+ const sessions=JSON.parse(localStorage.getItem('amh_saved_sessions')||'{}');
+ sessions[testerInfo.name]={testerInfo,results:testerResults,savedAt:now()};
+ localStorage.setItem('amh_saved_sessions',JSON.stringify(sessions));
+ exportTesterJSON();
+ toast('Saved! You can resume later by name.','success');
+}
+
 function resetTesterData(){
- if(!confirm('Are you sure you want to reset ALL test data? This cannot be undone.')) return;
- testerResults={};testerInfo=null;
+ if(!confirm('Reset ALL test data? This cannot be undone.'))return;
+ testerResults={};testerInfo=null;window._completionShown=false;
  localStorage.removeItem('amh_tester_results');
  localStorage.removeItem('amh_tester_info');
  localStorage.removeItem('amh_collapsed');
  collapsedModules={};
+ clearInterval(sessionTimerInterval);
  toast('All data reset.','info');
+ document.getElementById('session-info').style.display='none';
  checkOnboarding();
 }
 
@@ -773,52 +1033,41 @@ function resetTesterData(){
 function copyForTeams(role){
  let txt='';
  if(role==='tester'){
-  if(!testerInfo){toast('No data to copy','error');return}
+  if(!testerInfo){toast('No data','error');return}
   const w=Object.values(testerResults).filter(r=>r.status==='working').length;
   const f=Object.values(testerResults).filter(r=>r.status==='not-working').length;
+  const b=Object.values(testerResults).filter(r=>r.status==='blocked').length;
   const n=Object.values(testerResults).filter(r=>r.status==='na').length;
-  const u=TOTAL-Object.keys(testerResults).length;
-  txt=`\uD83D\uDCF1 AMH App Test Results\n\uD83D\uDC64 ${testerInfo.name} | ${testerInfo.os} | ${testerInfo.device}\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\u2705 Working: ${w}\n\u274C Not Working: ${f}\n\u23F3 N/A: ${n}\n\u26AA Untested: ${u}\n\n`;
-  const bugs=Object.entries(testerResults).filter(([,r])=>r.status==='not-working');
-  if(bugs.length){
-   txt+=`\uD83D\uDC1B Issues Found:\n`;
-   bugs.forEach(([id,r])=>{
+  const crit=Object.values(testerResults).filter(r=>r.severity==='Critical').length;
+  txt=`📱 AMH App Test Results — v3.0\n👤 ${testerInfo.name} | ${testerInfo.os} | ${testerInfo.device}\n🏷️ Run: ${testerInfo.runId||'N/A'}\n━━━━━━━━━━━━━━━\n✅ Pass: ${w}\n❌ Fail: ${f}\n🚫 Blocked: ${b}\n⏳ N/A: ${n}\n${crit?`🔴 Critical Defects: ${crit}\n`:''}\n`;
+  const issues=Object.entries(testerResults).filter(([,r])=>r.status==='not-working'||r.status==='blocked');
+  if(issues.length){
+   txt+=`\n🐛 Defects:\n`;
+   issues.sort((a,b)=>{const o={Critical:0,Major:1,Minor:2,Cosmetic:3,'':4};return (o[a[1].severity||'']||4)-(o[b[1].severity||'']||4)});
+   issues.forEach(([id,r])=>{
     const s=ALL_SCENARIOS.find(x=>x.id===id);
-    txt+=`  \u274C ${id}: ${s?s.en:'Unknown'} ${r.bugType?'['+r.bugType+']':''}\n`;
+    txt+=`  ${r.status==='blocked'?'🚫':'❌'} [${id}] ${s?s.en:''} ${r.severity?'['+r.severity+']':''} ${r.bugType?'('+r.bugType+')':''}\n`;
+    if(r.notes) txt+=`     💬 ${r.notes}\n`;
    });
   }
  } else if(role==='admin'){
-  if(!adminData.length){toast('No data loaded','error');return}
-  txt=`\uD83D\uDCCA AMH App \u2014 Admin Summary (${adminData.length} testers)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n`;
+  if(!adminData.length){toast('No data','error');return}
+  txt=`📊 AMH App — Admin Summary (${adminData.length} testers)\n━━━━━━━━━━━━━━━\n`;
   adminData.forEach(d=>{
-   const w=d.summary?.working||0,f=d.summary?.notWorking||0;
-   txt+=`\uD83D\uDC64 ${d.tester.name} (${d.tester.os}/${d.tester.device}): \u2705${w} \u274C${f}\n`;
+   const w=d.summary?.working||0,f=d.summary?.notWorking||0,b=d.summary?.blocked||0;
+   txt+=`👤 ${d.tester.name} (${d.tester.os}/${d.tester.device}): ✅${w} ❌${f} 🚫${b}\n`;
   });
-  const allBugs=getAggregatedBugs();
-  if(allBugs.length){
-   txt+=`\n\uD83D\uDC1B Top Bugs:\n`;
-   allBugs.slice(0,10).forEach(b=>{
-    txt+=`  \u274C ${b.id}: ${b.en} (${b.reporters.length} reporter${b.reporters.length>1?'s':''})\n`;
-   });
-  }
  } else if(role==='expert'){
-  const data=getExpertAggregated();
-  txt=`\uD83C\uDFAF AMH App \u2014 Go-Live Readiness\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n`;
-  txt+=`\uD83D\uDCCA Score: ${data.score}/100 \u2014 ${data.verdict}\n`;
-  txt+=`\u2705 Pass: ${data.working} | \u274C Fail: ${data.notWorking} | \u23F3 N/A: ${data.na} | \u26AA Untested: ${data.untested}\n`;
-  txt+=`Pass Rate: ${data.passRate}%\n\n`;
-  if(data.risks.length){
-   txt+=`\u26A0\uFE0F Risk Modules:\n`;
-   data.risks.forEach(r=>txt+=`  \u274C ${r.name}: ${r.failRate}% failure\n`);
-  }
+  const d=getExpertAggregated();
+  txt=`🎯 AMH App — Go-Live Readiness\n━━━━━━━━━━━━━━━\n📊 Score: ${d.score}/100 — ${d.verdict}\n✅ Pass: ${d.working} | ❌ Fail: ${d.notWorking} | 🚫 Blocked: ${d.blocked}\nPass Rate: ${d.passRate}%\n`;
+  if(d.risks.length){txt+=`\n⚠️ Risk Modules:\n`;d.risks.forEach(r=>txt+=`  ❌ ${r.name}: ${r.failRate}% failure\n`)}
  }
- navigator.clipboard.writeText(txt).then(()=>toast('Copied to clipboard!')).catch(()=>toast('Copy failed','error'));
+ navigator.clipboard.writeText(txt).then(()=>toast('Copied!')).catch(()=>toast('Copy failed','error'));
 }
 
 /* ===================================================================
    ADMIN TAB
    =================================================================== */
-// Drag and drop
 document.addEventListener('DOMContentLoaded',()=>{
  const dz=document.getElementById('drop-zone');
  ['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('dragover')}));
@@ -828,13 +1077,12 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 function handleFiles(files){
  Array.from(files).forEach(f=>{
-  if(!f.name.endsWith('.json')){toast('Skipped non-JSON: '+f.name,'error');return}
+  if(!f.name.endsWith('.json')){toast('Skipped: '+f.name,'error');return}
   const reader=new FileReader();
   reader.onload=e=>{
    try{
     const data=JSON.parse(e.target.result);
-    if(!data.tester||!data.results){toast('Invalid format: '+f.name,'error');return}
-    // Deduplicate by tester name + device
+    if(!data.tester||!data.results){toast('Invalid: '+f.name,'error');return}
     const key=data.tester.name+'|'+data.tester.device;
     const idx=adminData.findIndex(d=>(d.tester.name+'|'+d.tester.device)===key);
     if(idx>=0) adminData[idx]=data; else adminData.push(data);
@@ -853,126 +1101,143 @@ function renderAdmin(){
  const compDiv=document.getElementById('admin-comparison');
  const bugsDiv=document.getElementById('admin-bugs');
  const actDiv=document.getElementById('admin-actions');
+ const ddDiv=document.getElementById('admin-defect-summary');
 
- if(!adminData.length){
-  cards.innerHTML='';chartsDiv.style.display='none';compDiv.style.display='none';bugsDiv.style.display='none';actDiv.style.display='none';return;
- }
- chartsDiv.style.display='';compDiv.style.display='';bugsDiv.style.display='';actDiv.style.display='';
+ if(!adminData.length){cards.innerHTML='';chartsDiv.style.display='none';compDiv.style.display='none';bugsDiv.style.display='none';actDiv.style.display='none';ddDiv.style.display='none';return}
+ chartsDiv.style.display='';compDiv.style.display='';bugsDiv.style.display='';actDiv.style.display='';ddDiv.style.display='';
 
- // Tester cards
  cards.innerHTML=adminData.map((d,i)=>{
   const w=d.summary?.working||Object.values(d.results).filter(r=>r.status==='working').length;
   const f=d.summary?.notWorking||Object.values(d.results).filter(r=>r.status==='not-working').length;
+  const b=d.summary?.blocked||Object.values(d.results).filter(r=>r.status==='blocked').length;
   const n=d.summary?.na||Object.values(d.results).filter(r=>r.status==='na').length;
   return `<div class="tester-card">
    <div class="flex-between"><h4>${esc(d.tester.name)}</h4><button class="btn btn-xs btn-outline" onclick="removeAdmin(${i})">&times;</button></div>
-   <div class="meta">${esc(d.tester.os)} &bull; ${esc(d.tester.device)} &bull; v${esc(d.tester.version||'?')}</div>
-   <div class="stats"><span class="stat-g">${w} &#10004;</span><span class="stat-r">${f} &#10008;</span><span class="stat-o">${n} N/A</span></div>
+   <div class="meta">${esc(d.tester.os)} &bull; ${esc(d.tester.device)} &bull; v${esc(d.tester.version||'?')} ${d.tester.runId?'&bull; #'+d.tester.runId:''}</div>
+   <div class="stats"><span class="stat-g">${w} &#10004;</span><span class="stat-r">${f} &#10008;</span><span class="stat-p">${b} &#128683;</span><span class="stat-o">${n} N/A</span></div>
   </div>`;
  }).join('');
 
+ renderDefectDensity();
  renderAdminCharts();
  renderComparison();
  renderBugTable();
 }
 
+function renderDefectDensity(){
+ const totalDefects=adminData.reduce((sum,d)=>sum+Object.values(d.results).filter(r=>r.status==='not-working').length,0);
+ const totalBlocked=adminData.reduce((sum,d)=>sum+Object.values(d.results).filter(r=>r.status==='blocked').length,0);
+ const totalCritical=adminData.reduce((sum,d)=>sum+Object.values(d.results).filter(r=>r.severity==='Critical').length,0);
+ const totalMajor=adminData.reduce((sum,d)=>sum+Object.values(d.results).filter(r=>r.severity==='Major').length,0);
+ const density=(totalDefects/TOTAL*100).toFixed(1);
+ document.getElementById('defect-density-kpis').innerHTML=`
+  <div class="kpi-card"><div class="value" style="color:var(--red)">${totalDefects}</div><div class="label">Total Defects</div></div>
+  <div class="kpi-card"><div class="value" style="color:var(--purple)">${totalBlocked}</div><div class="label">Blocked</div></div>
+  <div class="kpi-card"><div class="value" style="color:#dc3545">${totalCritical}</div><div class="label">Critical</div></div>
+  <div class="kpi-card"><div class="value" style="color:var(--orange)">${totalMajor}</div><div class="label">Major</div></div>
+  <div class="kpi-card"><div class="value">${density}%</div><div class="label">Defect Density</div></div>
+  <div class="kpi-card"><div class="value">${adminData.length}</div><div class="label">Testers</div></div>`;
+}
+
 function removeAdmin(i){adminData.splice(i,1);saveAdminData();renderAdmin()}
-function clearAdminData(){if(!confirm('Clear all admin data?'))return;adminData=[];saveAdminData();renderAdmin();toast('Admin data cleared','info')}
+function clearAdminData(){if(!confirm('Clear all admin data?'))return;adminData=[];saveAdminData();renderAdmin();toast('Cleared','info')}
 
 function renderAdminCharts(){
- // Bar chart: per tester
  const labels=adminData.map(d=>d.tester.name);
  const wData=adminData.map(d=>Object.values(d.results).filter(r=>r.status==='working').length);
  const fData=adminData.map(d=>Object.values(d.results).filter(r=>r.status==='not-working').length);
+ const bData=adminData.map(d=>Object.values(d.results).filter(r=>r.status==='blocked').length);
  const nData=adminData.map(d=>Object.values(d.results).filter(r=>r.status==='na').length);
 
  if(chartBarTesters) chartBarTesters.destroy();
  chartBarTesters=new Chart(document.getElementById('chart-bar-testers'),{
   type:'bar',data:{labels,datasets:[
-   {label:'Working',data:wData,backgroundColor:'#28a745'},
-   {label:'Not Working',data:fData,backgroundColor:'#dc3545'},
+   {label:'Pass',data:wData,backgroundColor:'#28a745'},
+   {label:'Fail',data:fData,backgroundColor:'#dc3545'},
+   {label:'Blocked',data:bData,backgroundColor:'#6f42c1'},
    {label:'N/A',data:nData,backgroundColor:'#f0850e'}
   ]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}
  });
 
- // Doughnut: issues by module
+ // Module issues doughnut
  const modIssues={};
- adminData.forEach(d=>{
-  Object.entries(d.results).forEach(([id,r])=>{
-   if(r.status==='not-working'){
-    const s=ALL_SCENARIOS.find(x=>x.id===id);
-    if(s){modIssues[s.module]=(modIssues[s.module]||0)+1}
-   }
-  });
- });
- const modLabels=Object.keys(modIssues);
- const modVals=Object.values(modIssues);
+ adminData.forEach(d=>{Object.entries(d.results).forEach(([id,r])=>{
+  if(r.status==='not-working'||r.status==='blocked'){const s=ALL_SCENARIOS.find(x=>x.id===id);if(s){modIssues[s.module]=(modIssues[s.module]||0)+1}}
+ })});
+ const modLabels=Object.keys(modIssues);const modVals=Object.values(modIssues);
  const colors=['#dc3545','#f0850e','#ffc107','#0d7c5f','#0d6efd','#6f42c1','#e83e8c','#20c997','#fd7e14','#6c757d'];
-
  if(chartDoughnutModules) chartDoughnutModules.destroy();
  if(modLabels.length){
-  chartDoughnutModules=new Chart(document.getElementById('chart-doughnut-modules'),{
-   type:'doughnut',data:{labels:modLabels,datasets:[{data:modVals,backgroundColor:colors.slice(0,modLabels.length)}]},
-   options:{responsive:true,plugins:{legend:{position:'bottom'}}}
-  });
+  chartDoughnutModules=new Chart(document.getElementById('chart-doughnut-modules'),{type:'doughnut',data:{labels:modLabels,datasets:[{data:modVals,backgroundColor:colors.slice(0,modLabels.length)}]},options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
  }
+
+ // Severity chart
+ const sevCounts={Critical:0,Major:0,Minor:0,Cosmetic:0};
+ adminData.forEach(d=>{Object.values(d.results).forEach(r=>{if(r.severity&&sevCounts.hasOwnProperty(r.severity))sevCounts[r.severity]++})});
+ if(chartSeverity) chartSeverity.destroy();
+ chartSeverity=new Chart(document.getElementById('chart-severity'),{
+  type:'bar',data:{labels:Object.keys(sevCounts),datasets:[{label:'Count',data:Object.values(sevCounts),backgroundColor:['#dc3545','#f0850e','#ffc107','#6c757d']}]},
+  options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+ });
 }
 
 function renderComparison(){
  const table=document.getElementById('comparison-table');
- if(adminData.length<2){table.innerHTML='<tr><td style="padding:20px;text-align:center;color:var(--text-sec)">Need 2+ testers for comparison</td></tr>';return}
-
+ if(adminData.length<2){table.innerHTML='<tr><td style="padding:20px;text-align:center;color:var(--text-sec)">Need 2+ testers</td></tr>';return}
  let html=`<thead><tr><th>Scenario</th>`;
- adminData.forEach(d=>html+=`<th>${esc(d.tester.name)}<br><small>${esc(d.tester.os)}/${esc(d.tester.device)}</small></th>`);
+ adminData.forEach(d=>html+=`<th>${esc(d.tester.name)}<br><small>${esc(d.tester.device)}</small></th>`);
  html+=`</tr></thead><tbody>`;
-
  ALL_SCENARIOS.forEach(s=>{
   const statuses=adminData.map(d=>{const r=d.results[s.id];return r?r.status:'untested'});
-  const realStatuses=statuses.filter(st=>st!=='untested'&&st!=='na');
-  const hasConflict=new Set(realStatuses).size>1;
-  html+=`<tr class="${hasConflict?'conflict':''}">`;
-  html+=`<td><strong>${s.id}</strong> ${esc(s.en)}</td>`;
+  const real=statuses.filter(st=>st!=='untested'&&st!=='na');
+  const conflict=new Set(real).size>1;
+  html+=`<tr class="${conflict?'conflict':''}"><td><strong>${s.id}</strong> ${esc(s.en)}</td>`;
   statuses.forEach(st=>{
-   const icon=st==='working'?'&#10004;':st==='not-working'?'&#10008;':st==='na'?'&#9203;':'&#8212;';
-   const cls=st==='working'?'stat-g':st==='not-working'?'stat-r':st==='na'?'stat-o':'';
-   html+=`<td class="${cls}">${icon} ${hasConflict&&(st==='working'||st==='not-working')?'&#9888;':''}</td>`;
+   const icon=st==='working'?'&#10004;':st==='not-working'?'&#10008;':st==='blocked'?'&#128683;':st==='na'?'&#9203;':'&#8212;';
+   const cls=st==='working'?'stat-g':st==='not-working'?'stat-r':st==='blocked'?'stat-p':st==='na'?'stat-o':'';
+   html+=`<td class="${cls}">${icon}${conflict&&(st==='working'||st==='not-working')?' &#9888;':''}</td>`;
   });
   html+=`</tr>`;
  });
-
- html+=`</tbody>`;
- table.innerHTML=html;
+ html+=`</tbody>`;table.innerHTML=html;
 }
 
 function getAggregatedBugs(){
  const bugs={};
- adminData.forEach(d=>{
-  Object.entries(d.results).forEach(([id,r])=>{
-   if(r.status==='not-working'){
-    if(!bugs[id]) bugs[id]={id,reporters:[],bugTypes:new Set()};
-    const s=ALL_SCENARIOS.find(x=>x.id===id);
-    if(s){bugs[id].en=s.en;bugs[id].module=s.module}
-    bugs[id].reporters.push({name:d.tester.name,device:d.tester.device,os:d.tester.os});
-    if(r.bugType) bugs[id].bugTypes.add(r.bugType);
-   }
-  });
+ adminData.forEach(d=>{Object.entries(d.results).forEach(([id,r])=>{
+  if(r.status==='not-working'||r.status==='blocked'){
+   if(!bugs[id])bugs[id]={id,reporters:[],bugTypes:new Set(),severities:new Set(),notes:[]};
+   const s=ALL_SCENARIOS.find(x=>x.id===id);
+   if(s){bugs[id].en=s.en;bugs[id].module=s.module}
+   bugs[id].reporters.push({name:d.tester.name,device:d.tester.device,os:d.tester.os});
+   if(r.bugType)bugs[id].bugTypes.add(r.bugType);
+   if(r.severity)bugs[id].severities.add(r.severity);
+   if(r.notes)bugs[id].notes.push(`${d.tester.name}: ${r.notes}`);
+  }
+ })});
+ return Object.values(bugs).sort((a,b)=>{
+  const sevOrder={Critical:0,Major:1,Minor:2,Cosmetic:3};
+  const aMin=Math.min(...[...a.severities].map(s=>sevOrder[s]??4),4);
+  const bMin=Math.min(...[...b.severities].map(s=>sevOrder[s]??4),4);
+  return aMin!==bMin?aMin-bMin:b.reporters.length-a.reporters.length;
  });
- return Object.values(bugs).sort((a,b)=>b.reporters.length-a.reporters.length);
 }
 
 function renderBugTable(){
  const bugs=getAggregatedBugs();
  const table=document.getElementById('bug-table');
- if(!bugs.length){table.innerHTML='<tr><td style="padding:20px;text-align:center;color:var(--text-sec)">No bugs reported</td></tr>';return}
- let html=`<thead><tr><th>ID</th><th>Scenario</th><th>Module</th><th>Bug Type</th><th>Reporters</th><th>Count</th></tr></thead><tbody>`;
+ if(!bugs.length){table.innerHTML='<tr><td style="padding:20px;text-align:center;color:var(--text-sec)">No defects</td></tr>';return}
+ let html=`<thead><tr><th>ID</th><th>Scenario</th><th>Module</th><th>Severity</th><th>Type</th><th>Notes</th><th>Reporters</th><th>#</th></tr></thead><tbody>`;
  bugs.forEach(b=>{
+  const sevs=[...b.severities];
+  const sevHtml=sevs.map(s=>`<span class="severity-badge sev-${s.toLowerCase()}">${s}</span>`).join(' ')||'—';
   html+=`<tr><td><strong>${b.id}</strong></td><td>${esc(b.en||'')}</td><td>${esc(b.module||'')}</td>
-   <td>${[...b.bugTypes].join(', ')||'—'}</td>
-   <td>${b.reporters.map(r=>esc(r.name)+' ('+esc(r.os)+')').join(', ')}</td>
+   <td>${sevHtml}</td><td>${[...b.bugTypes].join(', ')||'—'}</td>
+   <td style="max-width:200px;font-size:.75rem">${b.notes.length?esc(b.notes[0]).substring(0,100)+(b.notes.length>1?' (+'+( b.notes.length-1)+')':''):'—'}</td>
+   <td>${b.reporters.map(r=>esc(r.name)).join(', ')}</td>
    <td><strong>${b.reporters.length}</strong></td></tr>`;
  });
- html+=`</tbody>`;
- table.innerHTML=html;
+ html+=`</tbody>`;table.innerHTML=html;
 }
 
 /* ===================================================================
@@ -980,46 +1245,52 @@ function renderBugTable(){
    =================================================================== */
 function exportAdminHTML(){
  const bugs=getAggregatedBugs();
- let doc=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AMH Test Report</title>
- <style>body{font-family:system-ui,sans-serif;max-width:900px;margin:40px auto;padding:20px;color:#1a1a2e}
- h1{color:#0d7c5f}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:8px 12px;border:1px solid #e2e6ea;text-align:left}
- th{background:#0d7c5f;color:#fff}.pass{color:#28a745}.fail{color:#dc3545}.na{color:#f0850e}</style></head><body>`;
- doc+=`<h1>AMH Patient App \u2014 Test Report</h1><p>Generated: ${new Date().toLocaleString()}</p><p>Testers: ${adminData.length}</p>`;
+ let doc=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AMH Test Report v3.0</title>
+ <style>body{font-family:system-ui,sans-serif;max-width:960px;margin:40px auto;padding:20px;color:#1a1a2e}
+ h1{color:#0d7c5f;border-bottom:3px solid #0d7c5f;padding-bottom:8px}h2{color:#095e48;margin-top:28px}
+ table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:8px 12px;border:1px solid #e2e6ea;text-align:left}
+ th{background:#0d7c5f;color:#fff}.pass{color:#28a745}.fail{color:#dc3545}.blocked{color:#6f42c1}
+ .sev-critical{background:#dc3545;color:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem}
+ .sev-major{background:#f0850e;color:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem}
+ .sev-minor{background:#ffc107;color:#333;padding:2px 6px;border-radius:4px;font-size:.75rem}
+ .kpi{display:inline-block;text-align:center;padding:16px 24px;margin:8px;border-radius:8px;background:#f4f6f8}
+ .kpi .val{font-size:1.5rem;font-weight:700}.kpi .lbl{font-size:.8rem;color:#5a6170}
+ </style></head><body>`;
+ doc+=`<h1>AMH Patient App — Test Report v3.0</h1><p>Generated: ${new Date().toLocaleString()} | Standard: IEEE 829 | Testers: ${adminData.length}</p>`;
 
- // Summary per tester
- doc+=`<h2>Tester Summary</h2><table><tr><th>Name</th><th>OS</th><th>Device</th><th>Working</th><th>Not Working</th><th>N/A</th></tr>`;
+ doc+=`<h2>Summary</h2><div>`;
  adminData.forEach(d=>{
   const w=Object.values(d.results).filter(r=>r.status==='working').length;
   const f=Object.values(d.results).filter(r=>r.status==='not-working').length;
-  const n=Object.values(d.results).filter(r=>r.status==='na').length;
-  doc+=`<tr><td>${esc(d.tester.name)}</td><td>${esc(d.tester.os)}</td><td>${esc(d.tester.device)}</td><td class="pass">${w}</td><td class="fail">${f}</td><td class="na">${n}</td></tr>`;
+  const b=Object.values(d.results).filter(r=>r.status==='blocked').length;
+  doc+=`<div class="kpi"><div class="val">${esc(d.tester.name)}</div><div class="lbl">${d.tester.os}/${d.tester.device}</div><div class="lbl" style="margin-top:4px"><span class="pass">${w}✓</span> <span class="fail">${f}✗</span> <span class="blocked">${b}⊘</span></div></div>`;
  });
- doc+=`</table>`;
+ doc+=`</div>`;
 
- // Bug list
  if(bugs.length){
-  doc+=`<h2>Bug List (${bugs.length})</h2><table><tr><th>ID</th><th>Scenario</th><th>Module</th><th>Type</th><th>Reporters</th></tr>`;
+  doc+=`<h2>Defect Register (${bugs.length})</h2><table><tr><th>ID</th><th>Scenario</th><th>Module</th><th>Severity</th><th>Type</th><th>Notes</th><th>Reporters</th></tr>`;
   bugs.forEach(b=>{
-   doc+=`<tr><td>${b.id}</td><td>${esc(b.en||'')}</td><td>${esc(b.module||'')}</td><td>${[...b.bugTypes].join(', ')||'\u2014'}</td><td>${b.reporters.map(r=>esc(r.name)).join(', ')}</td></tr>`;
+   const sevs=[...b.severities].map(s=>`<span class="sev-${s.toLowerCase()}">${s}</span>`).join(' ')||'—';
+   doc+=`<tr><td>${b.id}</td><td>${esc(b.en||'')}</td><td>${esc(b.module||'')}</td><td>${sevs}</td><td>${[...b.bugTypes].join(', ')||'—'}</td><td>${b.notes.join('<br>')||'—'}</td><td>${b.reporters.map(r=>esc(r.name)).join(', ')}</td></tr>`;
   });
   doc+=`</table>`;
  }
+ doc+=`<hr><p style="color:#999;font-size:.8rem">AMH Test Hub v3.0 — IEEE 829 Aligned</p></body></html>`;
 
- doc+=`</body></html>`;
  const blob=new Blob([doc],{type:'text/html'});
- const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`AMH_Admin_Report_${new Date().toISOString().slice(0,10)}.html`;a.click();
- toast('HTML report exported!');
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`AMH_Test_Report_${new Date().toISOString().slice(0,10)}.html`;a.click();
+ toast('Report exported!');
 }
 
 function exportAdminCSV(){
- let csv='Scenario ID,Scenario,Module';
- adminData.forEach(d=>csv+=`,${d.tester.name} (${d.tester.os})`);
+ let csv='Scenario ID,Scenario,Module,Priority';
+ adminData.forEach(d=>csv+=`,"${d.tester.name} (${d.tester.os}) Status","${d.tester.name} Severity","${d.tester.name} Notes"`);
  csv+='\n';
  ALL_SCENARIOS.forEach(s=>{
-  csv+=`"${s.id}","${s.en}","${s.module}"`;
+  csv+=`"${s.id}","${s.en}","${s.module}","${s.priority}"`;
   adminData.forEach(d=>{
    const r=d.results[s.id];
-   csv+=`,"${r?r.status+(r.bugType?' - '+r.bugType:''):'untested'}"`;
+   csv+=`,"${r?r.status:'untested'}","${r?.severity||''}","${(r?.notes||'').replace(/"/g,'""')}"`;
   });
   csv+='\n';
  });
@@ -1039,14 +1310,11 @@ function handleExpertFiles(files){
     const data=JSON.parse(e.target.result);
     if(data.results){
      Object.entries(data.results).forEach(([id,r])=>{
-      // Use worst status if multiple
-      if(!expertData[id] || r.status==='not-working') expertData[id]=r;
-      else if(r.status==='working' && (!expertData[id] || expertData[id].status==='na' || !expertData[id].status)) expertData[id]=r;
+      if(!expertData[id]||r.status==='not-working'||r.status==='blocked') expertData[id]=r;
+      else if(r.status==='working'&&(!expertData[id]||expertData[id].status==='na'||!expertData[id].status)) expertData[id]=r;
      });
     }
-    saveExpertData();
-    toast('Expert data loaded');
-    renderExpert();
+    saveExpertData();toast('Loaded');renderExpert();
    }catch(err){toast('Parse error','error')}
   };
   reader.readAsText(f);
@@ -1054,49 +1322,50 @@ function handleExpertFiles(files){
 }
 
 function loadExpertFromAdmin(){
- if(!adminData.length){toast('No admin data available','error');return}
- // Aggregate: worst case per scenario
+ if(!adminData.length){toast('No admin data','error');return}
  expertData={};
  ALL_SCENARIOS.forEach(s=>{
-  const statuses=adminData.map(d=>d.results[s.id]?.status).filter(Boolean);
-  if(statuses.includes('not-working')){
-   const bug=adminData.map(d=>d.results[s.id]?.bugType).find(Boolean);
-   expertData[s.id]={status:'not-working',bugType:bug||null,timestamp:now()};
-  } else if(statuses.includes('working')){
-   expertData[s.id]={status:'working',bugType:null,timestamp:now()};
-  } else if(statuses.includes('na')){
-   expertData[s.id]={status:'na',bugType:null,timestamp:now()};
+  const statuses=adminData.map(d=>d.results[s.id]).filter(Boolean);
+  if(statuses.some(r=>r.status==='not-working')){
+   const worst=statuses.find(r=>r.status==='not-working');
+   expertData[s.id]={...worst,timestamp:now()};
+  } else if(statuses.some(r=>r.status==='blocked')){
+   const worst=statuses.find(r=>r.status==='blocked');
+   expertData[s.id]={...worst,timestamp:now()};
+  } else if(statuses.some(r=>r.status==='working')){
+   expertData[s.id]={status:'working',severity:null,bugType:null,notes:'',timestamp:now()};
+  } else if(statuses.some(r=>r.status==='na')){
+   expertData[s.id]={status:'na',severity:null,bugType:null,notes:'',timestamp:now()};
   }
  });
- saveExpertData();
- toast('Data imported from Admin');
- renderExpert();
+ saveExpertData();toast('Imported');renderExpert();
 }
 
 function getExpertAggregated(){
  const results=expertData;
  const working=Object.values(results).filter(r=>r.status==='working').length;
  const notWorking=Object.values(results).filter(r=>r.status==='not-working').length;
+ const blocked=Object.values(results).filter(r=>r.status==='blocked').length;
  const na=Object.values(results).filter(r=>r.status==='na').length;
  const tested=Object.keys(results).length;
  const untested=TOTAL-tested;
  const testable=TOTAL-na;
  const passRate=testable>0?Math.round((working/testable)*100):0;
  const coverage=Math.round((tested/TOTAL)*100);
+ const criticals=Object.values(results).filter(r=>r.severity==='Critical').length;
+ const majors=Object.values(results).filter(r=>r.severity==='Major').length;
 
- // Priority breakdown
- const priGroups={high:{w:0,f:0,t:0},medium:{w:0,f:0,t:0},low:{w:0,f:0,t:0}};
+ const priGroups={high:{w:0,f:0,b:0,t:0},medium:{w:0,f:0,b:0,t:0},low:{w:0,f:0,b:0,t:0}};
  ALL_SCENARIOS.forEach(s=>{
-  const r=results[s.id];
-  const p=s.priority;
+  const r=results[s.id];const p=s.priority;
   priGroups[p].t++;
   if(r){
-   if(r.status==='working') priGroups[p].w++;
-   if(r.status==='not-working') priGroups[p].f++;
+   if(r.status==='working')priGroups[p].w++;
+   if(r.status==='not-working')priGroups[p].f++;
+   if(r.status==='blocked')priGroups[p].b++;
   }
  });
 
- const highRate=priGroups.high.t>0?priGroups.high.w/(priGroups.high.t-Object.values(results).filter(r=>r.status==='na').length||1):0;
  const highTestable=ALL_SCENARIOS.filter(s=>s.priority==='high').filter(s=>{const r=results[s.id];return !r||r.status!=='na'}).length;
  const highPass=ALL_SCENARIOS.filter(s=>s.priority==='high').filter(s=>{const r=results[s.id];return r&&r.status==='working'}).length;
  const medTestable=ALL_SCENARIOS.filter(s=>s.priority==='medium').filter(s=>{const r=results[s.id];return !r||r.status!=='na'}).length;
@@ -1104,110 +1373,102 @@ function getExpertAggregated(){
 
  const hRate=highTestable>0?highPass/highTestable:0;
  const mRate=medTestable>0?medPass/medTestable:0;
- const score=Math.round(hRate*50+mRate*30+(coverage/100)*20);
+ let score=Math.round(hRate*50+mRate*30+(coverage/100)*20);
+ // Penalty for critical defects
+ score=Math.max(0,score-(criticals*10)-(majors*3));
 
  let verdict='Critical — Not Ready';let verdictColor='var(--red)';
- if(score>=80){verdict='Ready for Go-Live';verdictColor='var(--green)'}
- else if(score>=60){verdict='Conditional — Needs Fixes';verdictColor='var(--orange)'}
- else if(score>=40){verdict='Not Ready — Significant Issues';verdictColor='var(--red)'}
+ if(score>=80&&criticals===0){verdict='GO — Ready for Release';verdictColor='var(--green)'}
+ else if(score>=60){verdict='Conditional — Fix Before Release';verdictColor='var(--orange)'}
+ else if(score>=40){verdict='NOT READY — Significant Issues';verdictColor='var(--red)'}
 
- // Module health
  const modules=MODULES.map(m=>{
   const w=m.scenarios.filter(s=>{const r=results[s.id];return r&&r.status==='working'}).length;
   const f=m.scenarios.filter(s=>{const r=results[s.id];return r&&r.status==='not-working'}).length;
+  const b=m.scenarios.filter(s=>{const r=results[s.id];return r&&r.status==='blocked'}).length;
   const n=m.scenarios.filter(s=>{const r=results[s.id];return r&&r.status==='na'}).length;
-  const u=m.scenarios.length-w-f-n;
-  const health=f===0&&u===0?'&#128994;':f>0?'&#128308;':u>0?'&#128992;':'&#128994;';
-  const failRate=(w+f)>0?Math.round(f/(w+f)*100):0;
-  return {name:m.name,nameAr:m.nameAr,total:m.scenarios.length,w,f,n,u,health,failRate,priority:m.priority};
+  const u=m.scenarios.length-w-f-b-n;
+  const health=f===0&&b===0&&u===0?'&#128994;':(f>0||b>0)?'&#128308;':u>0?'&#128992;':'&#128994;';
+  const failRate=(w+f+b)>0?Math.round((f+b)/(w+f+b)*100):0;
+  return {name:m.name,nameAr:m.nameAr,total:m.scenarios.length,w,f,b,n,u,health,failRate,priority:m.priority};
  });
 
- const risks=modules.filter(m=>m.f>0).sort((a,b)=>b.failRate-a.failRate);
-
- return {working,notWorking,na,untested,tested,passRate,coverage,score,verdict,verdictColor,modules,risks,priGroups};
+ const risks=modules.filter(m=>m.f>0||m.b>0).sort((a,b)=>b.failRate-a.failRate);
+ return {working,notWorking,blocked,na,untested,tested,passRate,coverage,score,verdict,verdictColor,modules,risks,priGroups,criticals,majors};
 }
 
 function renderExpert(){
  const d=getExpertAggregated();
-
- // KPIs
  document.getElementById('expert-kpis').innerHTML=`
   <div class="kpi-card"><div class="value" style="color:var(--pri)">${TOTAL}</div><div class="label">Total Scenarios</div></div>
   <div class="kpi-card"><div class="value" style="color:var(--green)">${d.passRate}%</div><div class="label">Pass Rate</div></div>
   <div class="kpi-card"><div class="value" style="color:var(--red)">${d.notWorking}</div><div class="label">Failures</div></div>
-  <div class="kpi-card"><div class="value" style="color:var(--blue)">${d.coverage}%</div><div class="label">Coverage</div></div>`;
+  <div class="kpi-card"><div class="value" style="color:var(--purple)">${d.blocked}</div><div class="label">Blocked</div></div>
+  <div class="kpi-card"><div class="value" style="color:var(--blue)">${d.coverage}%</div><div class="label">Coverage</div></div>
+  <div class="kpi-card"><div class="value" style="color:#dc3545">${d.criticals}</div><div class="label">Critical Defects</div></div>`;
 
- // Readiness
  document.getElementById('readiness-card').innerHTML=`
-  <div style="font-size:.85rem;color:var(--text-sec);margin-bottom:8px">GO-LIVE READINESS SCORE</div>
+  <div style="font-size:.82rem;color:var(--text-sec);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Go-Live Readiness Score</div>
   <div class="readiness-score" style="color:${d.verdictColor}">${d.score}</div>
   <div class="readiness-verdict" style="color:${d.verdictColor}">${d.verdict}</div>
-  <div style="margin-top:12px;font-size:.82rem;color:var(--text-sec)">
-   Formula: High-Priority Pass (50%) + Medium-Priority Pass (30%) + Coverage (20%)
+  <div style="margin-top:12px;font-size:.78rem;color:var(--text-sec)">
+   High-Priority Pass (50%) + Medium-Priority Pass (30%) + Coverage (20%) − Critical Penalty
   </div>`;
 
- // Module health table
  const ht=document.getElementById('health-table');
- let html=`<thead><tr><th>Module</th><th>Priority</th><th>Total</th><th>Pass</th><th>Fail</th><th>N/A</th><th>Untested</th><th>Health</th></tr></thead><tbody>`;
+ let html=`<thead><tr><th>Module</th><th>Priority</th><th>Total</th><th>Pass</th><th>Fail</th><th>Blocked</th><th>N/A</th><th>Untested</th><th>Health</th></tr></thead><tbody>`;
  d.modules.forEach(m=>{
-  html+=`<tr><td><strong>${esc(m.name)}</strong><br><small class="ar" style="color:var(--text-sec)">${esc(m.nameAr)}</small></td>
+  html+=`<tr><td><strong>${esc(m.name)}</strong><br><small class="ar">${esc(m.nameAr)}</small></td>
    <td><span class="badge ${m.priority==='high'?'badge-r':m.priority==='medium'?'badge-o':'badge-b'}">${m.priority}</span></td>
-   <td>${m.total}</td><td class="stat-g">${m.w}</td><td class="stat-r">${m.f}</td><td class="stat-o">${m.n}</td><td>${m.u}</td><td style="font-size:1.2rem">${m.health}</td></tr>`;
+   <td>${m.total}</td><td class="stat-g">${m.w}</td><td class="stat-r">${m.f}</td><td class="stat-p">${m.b}</td><td class="stat-o">${m.n}</td><td>${m.u}</td><td style="font-size:1.2rem">${m.health}</td></tr>`;
  });
- html+=`</tbody>`;
- ht.innerHTML=html;
+ ht.innerHTML=html+`</tbody>`;
 
- // Risks
  const rl=document.getElementById('risk-list');
  if(d.risks.length){
-  rl.innerHTML=d.risks.map(r=>`<li><span><strong>${esc(r.name)}</strong> <span class="badge badge-r">${r.priority}</span></span><span style="color:var(--red);font-weight:700">${r.failRate}% failure (${r.f}/${r.w+r.f})</span></li>`).join('');
+  rl.innerHTML=d.risks.map(r=>`<li><span><strong>${esc(r.name)}</strong> <span class="badge badge-r">${r.priority}</span></span><span style="color:var(--red);font-weight:700">${r.failRate}% failure (${r.f+r.b}/${r.w+r.f+r.b})</span></li>`).join('');
  } else {
   rl.innerHTML='<li style="color:var(--green);justify-content:center">No risk areas detected</li>';
  }
 
- // Charts
  renderExpertCharts(d);
 }
 
 function renderExpertCharts(d){
- const colors=['#28a745','#dc3545','#f0850e','#6c757d'];
+ const colors=['#28a745','#dc3545','#6f42c1','#f0850e','#6c757d'];
 
- // Doughnut
- if(chartExpertDoughnut) chartExpertDoughnut.destroy();
+ if(chartExpertDoughnut)chartExpertDoughnut.destroy();
  chartExpertDoughnut=new Chart(document.getElementById('chart-expert-doughnut'),{
-  type:'doughnut',data:{labels:['Working','Not Working','N/A','Untested'],datasets:[{data:[d.working,d.notWorking,d.na,d.untested],backgroundColor:colors}]},
+  type:'doughnut',data:{labels:['Pass','Fail','Blocked','N/A','Untested'],datasets:[{data:[d.working,d.notWorking,d.blocked,d.na,d.untested],backgroundColor:colors}]},
   options:{responsive:true,plugins:{legend:{position:'bottom'}}}
  });
 
- // Bar: coverage per module
- if(chartExpertBar) chartExpertBar.destroy();
+ if(chartExpertBar)chartExpertBar.destroy();
  chartExpertBar=new Chart(document.getElementById('chart-expert-bar'),{
   type:'bar',data:{labels:d.modules.map(m=>m.name),datasets:[
    {label:'Pass',data:d.modules.map(m=>m.w),backgroundColor:'#28a745'},
    {label:'Fail',data:d.modules.map(m=>m.f),backgroundColor:'#dc3545'},
+   {label:'Blocked',data:d.modules.map(m=>m.b),backgroundColor:'#6f42c1'},
    {label:'N/A',data:d.modules.map(m=>m.n),backgroundColor:'#f0850e'},
    {label:'Untested',data:d.modules.map(m=>m.u),backgroundColor:'#6c757d'}
   ]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true,ticks:{maxRotation:45}},y:{stacked:true,beginAtZero:true}}}
  });
 
- // Radar
- if(chartExpertRadar) chartExpertRadar.destroy();
+ if(chartExpertRadar)chartExpertRadar.destroy();
  chartExpertRadar=new Chart(document.getElementById('chart-expert-radar'),{
   type:'radar',data:{labels:d.modules.map(m=>m.name),datasets:[{
-   label:'Pass Rate %',data:d.modules.map(m=>{const t=m.w+m.f;return t>0?Math.round(m.w/t*100):0}),
+   label:'Pass Rate %',data:d.modules.map(m=>{const t=m.w+m.f+m.b;return t>0?Math.round(m.w/t*100):0}),
    borderColor:'#0d7c5f',backgroundColor:'rgba(13,124,95,.15)',pointBackgroundColor:'#0d7c5f'
   }]},options:{responsive:true,scales:{r:{beginAtZero:true,max:100}},plugins:{legend:{position:'bottom'}}}
  });
 
- // Priority breakdown
- if(chartExpertPriority) chartExpertPriority.destroy();
- const pg=d.priGroups;
- chartExpertPriority=new Chart(document.getElementById('chart-expert-priority'),{
-  type:'bar',data:{labels:['High','Medium','Low'],datasets:[
-   {label:'Working',data:[pg.high.w,pg.medium.w,pg.low.w],backgroundColor:'#28a745'},
-   {label:'Failing',data:[pg.high.f,pg.medium.f,pg.low.f],backgroundColor:'#dc3545'},
-   {label:'Other',data:[pg.high.t-pg.high.w-pg.high.f,pg.medium.t-pg.medium.w-pg.medium.f,pg.low.t-pg.low.w-pg.low.f],backgroundColor:'#6c757d'}
-  ]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}
+ // Severity breakdown
+ const sevData={Critical:0,Major:0,Minor:0,Cosmetic:0};
+ Object.values(expertData).forEach(r=>{if(r.severity&&sevData.hasOwnProperty(r.severity))sevData[r.severity]++});
+ if(chartExpertSeverity)chartExpertSeverity.destroy();
+ chartExpertSeverity=new Chart(document.getElementById('chart-expert-severity'),{
+  type:'bar',data:{labels:Object.keys(sevData),datasets:[{label:'Defects',data:Object.values(sevData),backgroundColor:['#dc3545','#f0850e','#ffc107','#6c757d']}]},
+  options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
  });
 }
 
@@ -1215,58 +1476,64 @@ function generateExpertReport(){
  const d=getExpertAggregated();
  const scope=document.getElementById('report-scope').value;
 
- let doc=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AMH Go-Live Readiness Report</title>
+ let doc=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AMH Go-Live Readiness Report v3.0</title>
  <style>body{font-family:system-ui,sans-serif;max-width:960px;margin:40px auto;padding:20px;color:#1a1a2e}
  h1{color:#0d7c5f;border-bottom:3px solid #0d7c5f;padding-bottom:8px}h2{color:#095e48;margin-top:28px}
  .score{font-size:3rem;font-weight:700;text-align:center;padding:20px;border-radius:12px;margin:16px 0}
  .score.green{background:#e4f5ef;color:#28a745}.score.yellow{background:#fff3e0;color:#f0850e}.score.red{background:#fde8ea;color:#dc3545}
  table{width:100%;border-collapse:collapse;margin:12px 0}th,td{padding:8px 12px;border:1px solid #e2e6ea;text-align:left}
- th{background:#0d7c5f;color:#fff}.pass{color:#28a745;font-weight:600}.fail{color:#dc3545;font-weight:600}
- .kpi-row{display:flex;gap:16px;margin:16px 0}.kpi{flex:1;text-align:center;padding:16px;border-radius:8px;background:#f4f6f8}
+ th{background:#0d7c5f;color:#fff}.pass{color:#28a745;font-weight:600}.fail{color:#dc3545;font-weight:600}.blocked{color:#6f42c1;font-weight:600}
+ .kpi-row{display:flex;gap:16px;margin:16px 0;flex-wrap:wrap}.kpi{flex:1;min-width:120px;text-align:center;padding:16px;border-radius:8px;background:#f4f6f8}
  .kpi .val{font-size:1.8rem;font-weight:700}.kpi .lbl{font-size:.85rem;color:#5a6170}
+ .sev-critical{background:#dc3545;color:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem}
+ .sev-major{background:#f0850e;color:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem}
+ .sev-minor{background:#ffc107;color:#333;padding:2px 6px;border-radius:4px;font-size:.75rem}
+ .sev-cosmetic{background:#6c757d;color:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem}
  </style></head><body>`;
 
- doc+=`<h1>AMH Patient App \u2014 Go-Live Readiness Report</h1>`;
- doc+=`<p>Generated: ${new Date().toLocaleString()}</p>`;
+ doc+=`<h1>AMH Patient App — Go-Live Readiness Report v3.0</h1>`;
+ doc+=`<p>Generated: ${new Date().toLocaleString()} | Standard: IEEE 829 Aligned | ISTQB Best Practices</p>`;
 
- const scoreClass=d.score>=80?'green':d.score>=60?'yellow':'red';
- doc+=`<div class="score ${scoreClass}">${d.score}/100 \u2014 ${d.verdict}</div>`;
+ const scoreClass=d.score>=80&&d.criticals===0?'green':d.score>=60?'yellow':'red';
+ doc+=`<div class="score ${scoreClass}">${d.score}/100 — ${d.verdict}</div>`;
 
  doc+=`<div class="kpi-row">
-  <div class="kpi"><div class="val">${TOTAL}</div><div class="lbl">Total Scenarios</div></div>
+  <div class="kpi"><div class="val">${TOTAL}</div><div class="lbl">Scenarios</div></div>
   <div class="kpi"><div class="val" style="color:#28a745">${d.passRate}%</div><div class="lbl">Pass Rate</div></div>
   <div class="kpi"><div class="val" style="color:#dc3545">${d.notWorking}</div><div class="lbl">Failures</div></div>
+  <div class="kpi"><div class="val" style="color:#6f42c1">${d.blocked}</div><div class="lbl">Blocked</div></div>
   <div class="kpi"><div class="val" style="color:#0d6efd">${d.coverage}%</div><div class="lbl">Coverage</div></div>
+  <div class="kpi"><div class="val" style="color:#dc3545">${d.criticals}</div><div class="lbl">Critical</div></div>
  </div>`;
 
- // Module health
- doc+=`<h2>Module Health</h2><table><tr><th>Module</th><th>Priority</th><th>Pass</th><th>Fail</th><th>N/A</th><th>Untested</th></tr>`;
+ doc+=`<h2>Module Health</h2><table><tr><th>Module</th><th>Priority</th><th>Pass</th><th>Fail</th><th>Blocked</th><th>N/A</th><th>Untested</th></tr>`;
  d.modules.forEach(m=>{
-  doc+=`<tr><td>${esc(m.name)}</td><td>${m.priority}</td><td class="pass">${m.w}</td><td class="fail">${m.f}</td><td>${m.n}</td><td>${m.u}</td></tr>`;
+  doc+=`<tr><td>${esc(m.name)}</td><td>${m.priority}</td><td class="pass">${m.w}</td><td class="fail">${m.f}</td><td class="blocked">${m.b}</td><td>${m.n}</td><td>${m.u}</td></tr>`;
  });
  doc+=`</table>`;
 
- // Scenarios based on scope
  let scenarios=ALL_SCENARIOS;
- if(scope==='failures') scenarios=scenarios.filter(s=>expertData[s.id]?.status==='not-working');
- if(scope==='na') scenarios=scenarios.filter(s=>expertData[s.id]?.status==='na'||!expertData[s.id]);
+ if(scope==='failures')scenarios=scenarios.filter(s=>expertData[s.id]?.status==='not-working');
+ if(scope==='blocked')scenarios=scenarios.filter(s=>expertData[s.id]?.status==='blocked');
+ if(scope==='na')scenarios=scenarios.filter(s=>expertData[s.id]?.status==='na'||!expertData[s.id]);
 
- doc+=`<h2>Scenario Details (${scope})</h2><table><tr><th>ID</th><th>Scenario</th><th>Module</th><th>Status</th><th>Bug Type</th></tr>`;
+ doc+=`<h2>Scenario Details (${scope})</h2><table><tr><th>ID</th><th>Scenario</th><th>Module</th><th>Status</th><th>Severity</th><th>Type</th><th>Notes</th></tr>`;
  scenarios.forEach(s=>{
   const r=expertData[s.id];
   const st=r?r.status:'untested';
-  const cls=st==='working'?'pass':st==='not-working'?'fail':'';
-  doc+=`<tr><td>${s.id}</td><td>${esc(s.en)}</td><td>${esc(s.module)}</td><td class="${cls}">${st}</td><td>${r?.bugType||'\u2014'}</td></tr>`;
+  const cls=st==='working'?'pass':st==='not-working'?'fail':st==='blocked'?'blocked':'';
+  const sev=r?.severity?`<span class="sev-${r.severity.toLowerCase()}">${r.severity}</span>`:'—';
+  doc+=`<tr><td>${s.id}</td><td>${esc(s.en)}</td><td>${esc(s.module)}</td><td class="${cls}">${st}</td><td>${sev}</td><td>${r?.bugType||'—'}</td><td>${r?.notes?esc(r.notes):'—'}</td></tr>`;
  });
  doc+=`</table>`;
 
  if(d.risks.length){
   doc+=`<h2>Risk Areas</h2><ul>`;
-  d.risks.forEach(r=>doc+=`<li><strong>${esc(r.name)}</strong> (${r.priority}) \u2014 ${r.failRate}% failure rate</li>`);
+  d.risks.forEach(r=>doc+=`<li><strong>${esc(r.name)}</strong> (${r.priority}) — ${r.failRate}% failure rate</li>`);
   doc+=`</ul>`;
  }
 
- doc+=`<hr><p style="color:#999;font-size:.8rem">Report generated by AMH Test Hub v2.0</p></body></html>`;
+ doc+=`<hr><p style="color:#999;font-size:.8rem">AMH Test Hub v3.0 — IEEE 829 Aligned — ISTQB Best Practices</p></body></html>`;
 
  const blob=new Blob([doc],{type:'text/html'});
  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`AMH_Readiness_Report_${new Date().toISOString().slice(0,10)}.html`;a.click();
@@ -1274,126 +1541,24 @@ function generateExpertReport(){
 }
 
 /* ===================================================================
-   MOBILE SUBMIT & SHARING
-   =================================================================== */
-function checkSubmitBar() { /* no longer needed */ }
-
-// Submit via WhatsApp
-function submitViaWhatsApp() {
-  const profile = getProfile();
-  const tested = Object.keys(testerResults).length;
-  const working = Object.values(testerResults).filter(r => r.status === 'working').length;
-  const notWorking = Object.values(testerResults).filter(r => r.status === 'not-working').length;
-  const na = Object.values(testerResults).filter(r => r.status === 'na').length;
-  const issues = Object.entries(testerResults).filter(([, r]) => r.status === 'not-working');
-
-  let msg = `*AMH Patient App \u2014 Test Results* \uD83C\uDFE5\n\n`;
-  msg += `\uD83D\uDC64 *${profile.name}*\n`;
-  msg += `\uD83D\uDCF1 ${profile.os} | ${profile.device} | v${profile.appVersion}\n`;
-  msg += `\uD83D\uDCF6 ${profile.network}\n\n`;
-  msg += `\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n`;
-  msg += `\u2705 Working: *${working}*\n`;
-  msg += `\u274C Not Working: *${notWorking}*\n`;
-  msg += `\u23F3 N/A: *${na}*\n`;
-  msg += `\uD83D\uDCCA Tested: ${tested}/${TOTAL} (${Math.round(tested/TOTAL*100)}%)\n`;
-  msg += `\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n`;
-
-  if (issues.length > 0) {
-    msg += `*\uD83D\uDC1B Issues Found:*\n`;
-    issues.forEach(([id, r], i) => {
-      const s = ALL_SCENARIOS.find(x => x.id === id);
-      msg += `${i+1}. [${id}] ${s ? s.en : 'Unknown'}\n`;
-      msg += `   Type: ${r.bugType || 'Not specified'}\n`;
-    });
-  } else {
-    msg += `\u2705 No issues found!\n`;
-  }
-
-  msg += `\n_Sent from AMH TestHub_`;
-
-  const encoded = encodeURIComponent(msg);
-  window.open(`https://wa.me/?text=${encoded}`, '_blank');
-  toast('Opening WhatsApp...', 'success');
-}
-
-// Submit via Email
-function submitViaEmail() {
-  const profile = getProfile();
-  const tested = Object.keys(testerResults).length;
-  const working = Object.values(testerResults).filter(r => r.status === 'working').length;
-  const notWorking = Object.values(testerResults).filter(r => r.status === 'not-working').length;
-  const issues = Object.entries(testerResults).filter(([, r]) => r.status === 'not-working');
-
-  const subject = `AMH App Test Results \u2014 ${profile.name} (${profile.os}/${profile.device})`;
-
-  let body = `AMH Patient App \u2014 Test Results\n\n`;
-  body += `Tester: ${profile.name}\n`;
-  body += `Device: ${profile.os} ${profile.osVersion} | ${profile.device}\n`;
-  body += `App Version: ${profile.appVersion}\n`;
-  body += `Network: ${profile.network}\n\n`;
-  body += `Results Summary:\n`;
-  body += `- Working: ${working}\n`;
-  body += `- Not Working: ${notWorking}\n`;
-  body += `- N/A: ${Object.values(testerResults).filter(r => r.status === 'na').length}\n`;
-  body += `- Tested: ${tested}/${TOTAL}\n\n`;
-
-  if (issues.length > 0) {
-    body += `Issues Found:\n`;
-    issues.forEach(([id, r], i) => {
-      const s = ALL_SCENARIOS.find(x => x.id === id);
-      body += `${i+1}. [${id}] ${s ? s.en : 'Unknown'} \u2014 ${r.bugType || 'Not specified'}\n`;
-    });
-  }
-
-  const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  window.location.href = mailto;
-  toast('Opening email...', 'success');
-}
-
-// Get tester profile from localStorage or testerInfo
-function getProfile() {
-  if (testerInfo) {
-    return {
-      name: testerInfo.name || 'Tester',
-      os: testerInfo.os || 'Unknown',
-      osVersion: '',
-      device: testerInfo.device || 'Unknown',
-      appVersion: testerInfo.version || '',
-      network: testerInfo.network || ''
-    };
-  }
-  const saved = localStorage.getItem('amh_tester_profile');
-  if (saved) return JSON.parse(saved);
-  return { name: 'Tester', os: 'Unknown', osVersion: '', device: 'Unknown', appVersion: '', network: '' };
-}
-
-// Triple-tap unlock for admin/expert on mobile
-let unlockTaps = 0;
-let unlockTimer = null;
-
-/* ===================================================================
    INIT
    =================================================================== */
+let unlockTaps=0,unlockTimer=null;
+
 document.addEventListener('DOMContentLoaded',()=>{
  checkOnboarding();
 
- // PWA banner dismiss check
- if (localStorage.getItem('pwa_dismissed')) {
-   const pwaBanner = document.getElementById('pwa-banner');
-   if (pwaBanner) pwaBanner.remove();
- }
-
- // Triple-tap unlock for admin/expert on mobile
- document.querySelector('.app-header').addEventListener('click', function(e) {
-   if (window.innerWidth > 768) return;
-   unlockTaps++;
-   clearTimeout(unlockTimer);
-   unlockTimer = setTimeout(() => { unlockTaps = 0; }, 800);
-   if (unlockTaps >= 3) {
-     document.querySelectorAll('.tab-btn[data-tab="admin"], .tab-btn[data-tab="expert"]').forEach(t => t.classList.add('unlocked'));
-     toast('Admin & Expert tabs unlocked', 'info');
-     unlockTaps = 0;
-   }
+ // Triple-tap unlock for mobile
+ document.getElementById('app-header').addEventListener('click',function(){
+  if(window.innerWidth>768)return;
+  unlockTaps++;
+  clearTimeout(unlockTimer);
+  unlockTimer=setTimeout(()=>{unlockTaps=0},800);
+  if(unlockTaps>=3){
+   document.querySelectorAll('.tab-btn[data-tab="admin"],.tab-btn[data-tab="expert"]').forEach(t=>t.classList.add('unlocked'));
+   toast('Admin & Expert tabs unlocked','info');
+   unlockTaps=0;
+  }
  });
 });
 </script>
