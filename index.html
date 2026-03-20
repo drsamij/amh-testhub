@@ -358,16 +358,71 @@ body{font-family:'DM Sans','Noto Kufi Arabic',system-ui,sans-serif;background:va
  </div>
 
  <div class="divider"></div>
- <h2 class="section-title">&#128196; Generate Report</h2>
- <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-  <select id="report-scope" class="form-group" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit">
+ <h2 class="section-title">&#128640; Send Report to Developers</h2>
+ <p style="color:var(--text-sec);font-size:.85rem;margin-bottom:16px">Choose how to share the test results with the development team.</p>
+
+ <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px">
+  <select id="report-scope" style="padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:.88rem;background:var(--card)">
    <option value="all">All Scenarios</option>
    <option value="failures">Failures Only</option>
    <option value="blocked">Blocked Only</option>
-   <option value="na">N/A Only</option>
+   <option value="critical">Critical &amp; Major Only</option>
   </select>
-  <button class="btn btn-pri" onclick="generateExpertReport()">Generate Report</button>
-  <button class="btn btn-outline" onclick="copyForTeams('expert')">&#128203; Copy for Teams</button>
+ </div>
+
+ <!-- Developer sharing cards -->
+ <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+
+  <!-- Email to Dev Team -->
+  <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid var(--blue)">
+   <div style="font-size:1.2rem;margin-bottom:6px">&#128231;</div>
+   <h4 style="font-size:.92rem;margin-bottom:4px">Email to Developers</h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Opens email client with formatted defect report &amp; environment details.</p>
+   <div class="form-group" style="margin-bottom:8px"><input type="email" id="dev-email" placeholder="dev-team@kfshrc.edu.sa" style="font-size:.82rem;padding:8px 10px"></div>
+   <button class="btn btn-pri btn-sm" style="width:100%" onclick="sendDevEmail()">&#128232; Compose Email</button>
+  </div>
+
+  <!-- WhatsApp -->
+  <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid #25D366">
+   <div style="font-size:1.2rem;margin-bottom:6px">&#128172;</div>
+   <h4 style="font-size:.92rem;margin-bottom:4px">WhatsApp / Chat</h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Copy concise bug report formatted for WhatsApp or any chat app.</p>
+   <button class="btn btn-sm" style="width:100%;background:#25D366;color:#fff" onclick="shareDevWhatsApp()">&#128172; Send via WhatsApp</button>
+   <button class="btn btn-outline btn-sm mt-12" style="width:100%" onclick="copyDevReport()">&#128203; Copy to Clipboard</button>
+  </div>
+
+  <!-- Teams -->
+  <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid #6264A7">
+   <div style="font-size:1.2rem;margin-bottom:6px">&#128188;</div>
+   <h4 style="font-size:.92rem;margin-bottom:4px">Microsoft Teams</h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Formatted summary with tables ready for Teams channels.</p>
+   <button class="btn btn-sm" style="width:100%;background:#6264A7;color:#fff" onclick="copyForTeams('expert')">&#128203; Copy for Teams</button>
+  </div>
+
+  <!-- HTML Report -->
+  <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid var(--pri)">
+   <div style="font-size:1.2rem;margin-bottom:6px">&#128196;</div>
+   <h4 style="font-size:.92rem;margin-bottom:4px">Full HTML Report</h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Professional report with charts summary, module health &amp; defect register.</p>
+   <button class="btn btn-pri btn-sm" style="width:100%" onclick="generateExpertReport()">&#128229; Download HTML</button>
+  </div>
+
+  <!-- CSV / Excel -->
+  <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid var(--green)">
+   <div style="font-size:1.2rem;margin-bottom:6px">&#128202;</div>
+   <h4 style="font-size:.92rem;margin-bottom:4px">CSV (for Jira / Excel)</h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Importable into Jira, Azure DevOps, Excel, or Google Sheets.</p>
+   <button class="btn btn-green btn-sm" style="width:100%" onclick="exportDevCSV()">&#128229; Download CSV</button>
+  </div>
+
+  <!-- Telegram -->
+  <div style="background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-top:3px solid #0088cc">
+   <div style="font-size:1.2rem;margin-bottom:6px">&#128233;</div>
+   <h4 style="font-size:.92rem;margin-bottom:4px">Telegram Bot</h4>
+   <p style="font-size:.78rem;color:var(--text-sec);margin-bottom:12px">Send summary directly to your Telegram channel or group.</p>
+   <button class="btn btn-sm" style="width:100%;background:#0088cc;color:#fff" onclick="sendToTelegram()">&#128233; Send to Telegram</button>
+  </div>
+
  </div>
 
  <div class="divider"></div>
@@ -1472,6 +1527,163 @@ function renderExpertCharts(d){
  });
 }
 
+/* ===================================================================
+   DEVELOPER SHARING FUNCTIONS
+   =================================================================== */
+
+function getFilteredBugs(){
+ const scope=document.getElementById('report-scope').value;
+ const bugs=[];
+ ALL_SCENARIOS.forEach(s=>{
+  const r=expertData[s.id];
+  if(!r)return;
+  if(scope==='failures'&&r.status!=='not-working')return;
+  if(scope==='blocked'&&r.status!=='blocked')return;
+  if(scope==='critical'&&r.severity!=='Critical'&&r.severity!=='Major')return;
+  if(scope==='all'&&r.status!=='not-working'&&r.status!=='blocked')return;
+  if(r.status==='not-working'||r.status==='blocked'){
+   bugs.push({id:s.id,en:s.en,module:s.module,priority:s.priority,expected:s.expected,status:r.status,severity:r.severity||'Unset',bugType:r.bugType||'Unset',notes:r.notes||''});
+  }
+ });
+ // Sort: Critical first, then Major, etc.
+ const sevOrder={Critical:0,Major:1,Minor:2,Cosmetic:3,Unset:4};
+ bugs.sort((a,b)=>(sevOrder[a.severity]||4)-(sevOrder[b.severity]||4));
+ return bugs;
+}
+
+function buildDevSummaryText(){
+ const d=getExpertAggregated();
+ const bugs=getFilteredBugs();
+ const scope=document.getElementById('report-scope').value;
+ const scopeLabel={all:'All Defects',failures:'Failures Only',blocked:'Blocked Only',critical:'Critical & Major'}[scope];
+
+ let txt=`🏥 AMH Patient App — Bug Report for Developers\n`;
+ txt+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+ txt+=`📊 Readiness: ${d.score}/100 — ${d.verdict}\n`;
+ txt+=`📋 Filter: ${scopeLabel}\n`;
+ txt+=`📅 Date: ${new Date().toLocaleDateString('en-GB')}\n`;
+ txt+=`✅ Pass: ${d.working} | ❌ Fail: ${d.notWorking} | 🚫 Blocked: ${d.blocked} | ⏳ N/A: ${d.na}\n`;
+ txt+=`📈 Pass Rate: ${d.passRate}% | Defect Density: ${((d.notWorking/(TOTAL-d.na))*100).toFixed(1)}%\n`;
+ txt+=`🔴 Critical: ${d.criticals} | 🟠 Major: ${d.majors}\n`;
+ txt+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+ if(bugs.length===0){
+  txt+=`✅ No defects found matching filter!\n`;
+ } else {
+  txt+=`🐛 DEFECTS (${bugs.length}):\n\n`;
+  bugs.forEach((b,i)=>{
+   const sevIcon={Critical:'🔴',Major:'🟠',Minor:'🟡',Cosmetic:'⚪',Unset:'⬜'}[b.severity];
+   txt+=`${i+1}. ${sevIcon} [${b.severity.toUpperCase()}] ${b.id} — ${b.en}\n`;
+   txt+=`   📁 Module: ${b.module} | Priority: ${b.priority}\n`;
+   txt+=`   📌 Status: ${b.status==='blocked'?'🚫 BLOCKED':'❌ FAILED'}\n`;
+   if(b.bugType!=='Unset') txt+=`   🏷️ Type: ${b.bugType}\n`;
+   if(b.expected) txt+=`   🎯 Expected: ${b.expected}\n`;
+   if(b.notes) txt+=`   💬 Notes: ${b.notes}\n`;
+   txt+=`\n`;
+  });
+ }
+
+ // Add risk modules
+ if(d.risks.length){
+  txt+=`⚠️ HIGH-RISK MODULES:\n`;
+  d.risks.forEach(r=>txt+=`   ❌ ${r.name} — ${r.failRate}% failure rate\n`);
+  txt+=`\n`;
+ }
+
+ txt+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+ txt+=`📱 AMH Test Hub v3.0 | IEEE 829 Aligned`;
+ return txt;
+}
+
+function sendDevEmail(){
+ const d=getExpertAggregated();
+ const bugs=getFilteredBugs();
+ const email=document.getElementById('dev-email').value||'';
+
+ let subject=`[AMH App] Bug Report — ${bugs.length} defects | Score: ${d.score}/100 — ${d.verdict}`;
+
+ let body=`AMH Patient App — Developer Bug Report\n`;
+ body+=`Date: ${new Date().toLocaleString()}\n`;
+ body+=`Readiness Score: ${d.score}/100 — ${d.verdict}\n\n`;
+ body+=`SUMMARY:\n`;
+ body+=`• Pass: ${d.working} | Fail: ${d.notWorking} | Blocked: ${d.blocked}\n`;
+ body+=`• Pass Rate: ${d.passRate}% | Critical: ${d.criticals} | Major: ${d.majors}\n\n`;
+
+ if(bugs.length){
+  body+=`DEFECTS TO FIX (${bugs.length}):\n`;
+  body+=`${'='.repeat(50)}\n\n`;
+  bugs.forEach((b,i)=>{
+   body+=`${i+1}. [${b.severity}] ${b.id} — ${b.en}\n`;
+   body+=`   Module: ${b.module} | Priority: ${b.priority}\n`;
+   body+=`   Status: ${b.status.toUpperCase()}\n`;
+   if(b.bugType!=='Unset') body+=`   Type: ${b.bugType}\n`;
+   if(b.expected) body+=`   Expected: ${b.expected}\n`;
+   if(b.notes) body+=`   Observation: ${b.notes}\n`;
+   body+=`\n`;
+  });
+ } else {
+  body+=`No defects found. All tests passing!\n`;
+ }
+
+ body+=`\n---\nAMH Test Hub v3.0 | IEEE 829 Aligned\n`;
+
+ const mailto=`mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+ window.open(mailto,'_blank');
+ toast('Email client opened!','success');
+}
+
+function shareDevWhatsApp(){
+ const txt=buildDevSummaryText();
+ const url=`https://wa.me/?text=${encodeURIComponent(txt)}`;
+ window.open(url,'_blank');
+ toast('Opening WhatsApp...','success');
+}
+
+function copyDevReport(){
+ const txt=buildDevSummaryText();
+ navigator.clipboard.writeText(txt).then(()=>toast('Bug report copied to clipboard!')).catch(()=>toast('Copy failed','error'));
+}
+
+function exportDevCSV(){
+ const bugs=getFilteredBugs();
+ let csv='Bug #,Scenario ID,Scenario,Module,Priority,Status,Severity,Defect Type,Expected Result,Notes\n';
+ bugs.forEach((b,i)=>{
+  csv+=`${i+1},"${b.id}","${b.en}","${b.module}","${b.priority}","${b.status}","${b.severity}","${b.bugType}","${(b.expected||'').replace(/"/g,'""')}","${(b.notes||'').replace(/"/g,'""')}"\n`;
+ });
+ if(bugs.length===0){csv+='No defects found\n'}
+ const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+ a.download=`AMH_Bugs_For_Dev_${new Date().toISOString().slice(0,10)}.csv`;
+ a.click();
+ toast(`CSV exported with ${bugs.length} defects!`);
+}
+
+function sendToTelegram(){
+ const txt=buildDevSummaryText();
+ // Use Telegram Bot API if configured, otherwise open share link
+ const TELEGRAM_BOT_TOKEN='7745390860:AAGrdajKaIzqrpR2jyWXphqUd6TSvqJjEFM';
+ const TELEGRAM_CHAT_ID='8388890620';
+
+ fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text:txt,parse_mode:'',disable_web_page_preview:true})
+ })
+ .then(res=>res.json())
+ .then(data=>{
+  if(data.ok) toast('Report sent to Telegram!','success');
+  else toast('Telegram error: '+data.description,'error');
+ })
+ .catch(()=>{
+  // Fallback: open Telegram share URL
+  window.open(`https://t.me/share/url?url=${encodeURIComponent('AMH Bug Report')}&text=${encodeURIComponent(txt)}`,'_blank');
+  toast('Opened Telegram share...','info');
+ });
+}
+
+/* ===================================================================
+   EXPERT HTML REPORT
+   =================================================================== */
 function generateExpertReport(){
  const d=getExpertAggregated();
  const scope=document.getElementById('report-scope').value;
